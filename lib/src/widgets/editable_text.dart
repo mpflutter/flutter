@@ -174,7 +174,10 @@ class TextEditingController extends ValueNotifier<TextEditingValue> {
       selection: const TextSelection.collapsed(offset: -1),
       composing: TextRange.empty,
     );
+    textDirty = true;
   }
+
+  bool textDirty = false;
 
   @override
   set value(TextEditingValue newValue) {

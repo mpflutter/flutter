@@ -39,8 +39,8 @@ VoidCallback? scheduleFrameCallback = () {
 class MockWindow extends Window {
   MockWindow();
 
-  double get devicePixelRatio => 1.0;
-  Size get physicalSize => Size.zero;
+  double get devicePixelRatio => DeviceInfo.devicePixelRatio;
+  Size get physicalSize => Size(DeviceInfo.physicalSizeWidth, DeviceInfo.physicalSizeHeight);
   WindowPadding get viewInsets => WindowPadding.zero;
 
   WindowPadding get viewPadding => WindowPadding.zero;
