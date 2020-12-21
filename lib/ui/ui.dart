@@ -18,7 +18,6 @@ import './src/mock_engine/request_animation_frame_io.dart'
 import './src/mock_engine/device_info_io.dart'
     if (dart.library.js) './src/mock_engine/device_info_js.dart';
 
-
 part 'src/ui/annotations.dart';
 part 'src/ui/canvas.dart';
 part 'src/ui/channel_buffers.dart';
@@ -60,7 +59,9 @@ void webOnlyInitializeEngine() {}
 
 void webOnlySetPluginHandler(
     Future<void> Function(String, ByteData?, PlatformMessageResponseCallback?)
-        handler) {}
+        handler) {
+  pluginMessageCallHandler = handler;
+}
 
 // TODO(yjbanov): The code below was temporarily moved from lib/web_ui/lib/src/engine/platform_views.dart
 //                during the NNBD migration so that `dart:ui` does not have to export `dart:_engine`. NNBD

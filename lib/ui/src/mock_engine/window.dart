@@ -3,6 +3,9 @@ part of dart.ui;
 
 bool waitingForAnimation = false;
 
+Future<void> Function(String, ByteData?, PlatformMessageResponseCallback?)?
+    pluginMessageCallHandler;
+
 VoidCallback? scheduleFrameCallback = () {
   // We're asked to schedule a frame and call `frameHandler` when the frame
   // fires.
@@ -40,7 +43,8 @@ class MockWindow extends Window {
   MockWindow();
 
   double get devicePixelRatio => DeviceInfo.devicePixelRatio;
-  Size get physicalSize => Size(DeviceInfo.physicalSizeWidth, DeviceInfo.physicalSizeHeight);
+  Size get physicalSize =>
+      Size(DeviceInfo.physicalSizeWidth, DeviceInfo.physicalSizeHeight);
   WindowPadding get viewInsets => WindowPadding.zero;
 
   WindowPadding get viewPadding => WindowPadding.zero;
@@ -112,15 +116,36 @@ class MockWindow extends Window {
   set onSemanticsAction(SemanticsActionCallback? callback) {}
   VoidCallback? get onAccessibilityFeaturesChanged => null;
   set onAccessibilityFeaturesChanged(VoidCallback? callback) {}
-  PlatformMessageCallback? get onPlatformMessage => null;
-  set onPlatformMessage(PlatformMessageCallback? callback) {}
+
+  PlatformMessageCallback? _onPlatformMessage;
+
+  PlatformMessageCallback? get onPlatformMessage => _onPlatformMessage;
+
+  set onPlatformMessage(PlatformMessageCallback? callback) {
+    _onPlatformMessage = callback;
+  }
+
   void updateSemantics(SemanticsUpdate update) {}
 
   void sendPlatformMessage(
     String name,
     ByteData? data,
     PlatformMessageResponseCallback? callback,
-  ) {}
+  ) {
+    if (name.startsWith('flutter/')) {
+      return;
+    }
+    if (pluginMessageCallHandler != null) {
+      pluginMessageCallHandler!(name, data, callback);
+      return;
+    }
+    Future<void>.delayed(Duration.zero).then((_) {
+      if (callback != null) {
+        callback(data);
+      }
+    });
+  }
+
   AccessibilityFeatures get accessibilityFeatures => _accessibilityFeatures;
   AccessibilityFeatures _accessibilityFeatures = AccessibilityFeatures._(0);
   void render(Scene scene) {}
