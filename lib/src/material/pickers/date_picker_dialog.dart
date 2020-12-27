@@ -32,7 +32,6 @@ const Duration _dialogSizeAnimationDuration = Duration(milliseconds: 200);
 const double _inputFormPortraitHeight = 98.0;
 const double _inputFormLandscapeHeight = 108.0;
 
-
 /// Shows a dialog containing a Material Design date picker.
 ///
 /// The returned [Future] resolves to the date selected by the user when the
@@ -130,22 +129,14 @@ Future<DateTime> showDatePicker({
   initialDate = utils.dateOnly(initialDate);
   firstDate = utils.dateOnly(firstDate);
   lastDate = utils.dateOnly(lastDate);
-  assert(
-    !lastDate.isBefore(firstDate),
-    'lastDate $lastDate must be on or after firstDate $firstDate.'
-  );
-  assert(
-    !initialDate.isBefore(firstDate),
-    'initialDate $initialDate must be on or after firstDate $firstDate.'
-  );
-  assert(
-    !initialDate.isAfter(lastDate),
-    'initialDate $initialDate must be on or before lastDate $lastDate.'
-  );
-  assert(
-    selectableDayPredicate == null || selectableDayPredicate(initialDate),
-    'Provided initialDate $initialDate must satisfy provided selectableDayPredicate.'
-  );
+  assert(!lastDate.isBefore(firstDate),
+      'lastDate $lastDate must be on or after firstDate $firstDate.');
+  assert(!initialDate.isBefore(firstDate),
+      'initialDate $initialDate must be on or after firstDate $firstDate.');
+  assert(!initialDate.isAfter(lastDate),
+      'initialDate $initialDate must be on or before lastDate $lastDate.');
+  assert(selectableDayPredicate == null || selectableDayPredicate(initialDate),
+      'Provided initialDate $initialDate must satisfy provided selectableDayPredicate.');
   assert(initialEntryMode != null);
   assert(useRootNavigator != null);
   assert(initialDatePickerMode != null);
@@ -210,32 +201,26 @@ class _DatePickerDialog extends StatefulWidget {
     this.errorInvalidText,
     this.fieldHintText,
     this.fieldLabelText,
-  }) : assert(initialDate != null),
-       assert(firstDate != null),
-       assert(lastDate != null),
-       initialDate = utils.dateOnly(initialDate),
-       firstDate = utils.dateOnly(firstDate),
-       lastDate = utils.dateOnly(lastDate),
-       currentDate = utils.dateOnly(currentDate ?? DateTime.now()),
-       assert(initialEntryMode != null),
-       assert(initialCalendarMode != null),
-       super(key: key) {
+  })  : assert(initialDate != null),
+        assert(firstDate != null),
+        assert(lastDate != null),
+        initialDate = utils.dateOnly(initialDate),
+        firstDate = utils.dateOnly(firstDate),
+        lastDate = utils.dateOnly(lastDate),
+        currentDate = utils.dateOnly(currentDate ?? DateTime.now()),
+        assert(initialEntryMode != null),
+        assert(initialCalendarMode != null),
+        super(key: key) {
+    assert(!this.lastDate.isBefore(this.firstDate),
+        'lastDate ${this.lastDate} must be on or after firstDate ${this.firstDate}.');
+    assert(!this.initialDate.isBefore(this.firstDate),
+        'initialDate ${this.initialDate} must be on or after firstDate ${this.firstDate}.');
+    assert(!this.initialDate.isAfter(this.lastDate),
+        'initialDate ${this.initialDate} must be on or before lastDate ${this.lastDate}.');
     assert(
-      !this.lastDate.isBefore(this.firstDate),
-      'lastDate ${this.lastDate} must be on or after firstDate ${this.firstDate}.'
-    );
-    assert(
-      !this.initialDate.isBefore(this.firstDate),
-      'initialDate ${this.initialDate} must be on or after firstDate ${this.firstDate}.'
-    );
-    assert(
-      !this.initialDate.isAfter(this.lastDate),
-      'initialDate ${this.initialDate} must be on or before lastDate ${this.lastDate}.'
-    );
-    assert(
-      selectableDayPredicate == null || selectableDayPredicate(this.initialDate),
-      'Provided initialDate ${this.initialDate} must satisfy provided selectableDayPredicate'
-    );
+        selectableDayPredicate == null ||
+            selectableDayPredicate(this.initialDate),
+        'Provided initialDate ${this.initialDate} must satisfy provided selectableDayPredicate');
   }
 
   /// The initially selected [DateTime] that the picker should display.
@@ -282,7 +267,6 @@ class _DatePickerDialog extends StatefulWidget {
 }
 
 class _DatePickerDialogState extends State<_DatePickerDialog> {
-
   DatePickerEntryMode _entryMode;
   DateTime _selectedDate;
   bool _autoValidate;
@@ -355,31 +339,32 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
     return null;
   }
 
-  static final Map<LogicalKeySet, Intent> _formShortcutMap = <LogicalKeySet, Intent>{
+  static final Map<dynamic, Intent> _formShortcutMap = <dynamic, Intent>{
     // Pressing enter on the field will move focus to the next field or control.
-    LogicalKeySet(LogicalKeyboardKey.enter): const NextFocusIntent(),
   };
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
-    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
     final Orientation orientation = MediaQuery.of(context).orientation;
     final TextTheme textTheme = theme.textTheme;
     // Constrain the textScaleFactor to the largest supported value to prevent
     // layout issues.
-    final double textScaleFactor = math.min(MediaQuery.of(context).textScaleFactor, 1.3);
+    final double textScaleFactor =
+        math.min(MediaQuery.of(context).textScaleFactor, 1.3);
 
     final String dateText = _selectedDate != null
-      ? localizations.formatMediumDate(_selectedDate)
-      : localizations.unspecifiedDate;
+        ? localizations.formatMediumDate(_selectedDate)
+        : localizations.unspecifiedDate;
     final Color dateColor = colorScheme.brightness == Brightness.light
-      ? colorScheme.onPrimary
-      : colorScheme.onSurface;
+        ? colorScheme.onPrimary
+        : colorScheme.onSurface;
     final TextStyle dateStyle = orientation == Orientation.landscape
-      ? textTheme.headline5?.copyWith(color: dateColor)
-      : textTheme.headline4?.copyWith(color: dateColor);
+        ? textTheme.headline5?.copyWith(color: dateColor)
+        : textTheme.headline4?.copyWith(color: dateColor);
 
     final Widget actions = Container(
       alignment: AlignmentDirectional.centerEnd,
@@ -425,28 +410,27 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
           autovalidate: _autoValidate,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            height: orientation == Orientation.portrait ? _inputFormPortraitHeight : _inputFormLandscapeHeight,
-            child: Shortcuts(
-              shortcuts: _formShortcutMap,
-              child: Column(
-                children: <Widget>[
-                  const Spacer(),
-                  InputDatePickerFormField(
-                    initialDate: _selectedDate,
-                    firstDate: widget.firstDate,
-                    lastDate: widget.lastDate,
-                    onDateSubmitted: _handleDateChanged,
-                    onDateSaved: _handleDateChanged,
-                    selectableDayPredicate: widget.selectableDayPredicate,
-                    errorFormatText: widget.errorFormatText,
-                    errorInvalidText: widget.errorInvalidText,
-                    fieldHintText: widget.fieldHintText,
-                    fieldLabelText: widget.fieldLabelText,
-                    autofocus: true,
-                  ),
-                  const Spacer(),
-                ],
-              ),
+            height: orientation == Orientation.portrait
+                ? _inputFormPortraitHeight
+                : _inputFormLandscapeHeight,
+            child: Column(
+              children: <Widget>[
+                const Spacer(),
+                InputDatePickerFormField(
+                  initialDate: _selectedDate,
+                  firstDate: widget.firstDate,
+                  lastDate: widget.lastDate,
+                  onDateSubmitted: _handleDateChanged,
+                  onDateSaved: _handleDateChanged,
+                  selectableDayPredicate: widget.selectableDayPredicate,
+                  errorFormatText: widget.errorFormatText,
+                  errorInvalidText: widget.errorInvalidText,
+                  fieldHintText: widget.fieldHintText,
+                  fieldLabelText: widget.fieldLabelText,
+                  autofocus: true,
+                ),
+                const Spacer(),
+              ],
             ),
           ),
         );
@@ -512,7 +496,8 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
           }),
         ),
       ),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+      insetPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       clipBehavior: Clip.antiAlias,
     );
   }

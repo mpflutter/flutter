@@ -585,7 +585,7 @@ class MaterialApp extends StatefulWidget {
   /// ```
   /// {@end-tool}
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
-  final Map<LogicalKeySet, Intent> shortcuts;
+  final Map<dynamic, Intent> shortcuts;
 
   /// {@macro flutter.widgets.widgetsApp.actions}
   /// {@tool snippet}

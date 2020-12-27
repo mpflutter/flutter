@@ -46,22 +46,23 @@ class CalendarDateRangePicker extends StatefulWidget {
     DateTime currentDate,
     @required this.onStartDateChanged,
     @required this.onEndDateChanged,
-  }) : initialStartDate = initialStartDate != null ? utils.dateOnly(initialStartDate) : null,
-       initialEndDate = initialEndDate != null ? utils.dateOnly(initialEndDate) : null,
-       assert(firstDate != null),
-       assert(lastDate != null),
-       firstDate = utils.dateOnly(firstDate),
-       lastDate = utils.dateOnly(lastDate),
-       currentDate = utils.dateOnly(currentDate ?? DateTime.now()),
-       super(key: key) {
+  })  : initialStartDate =
+            initialStartDate != null ? utils.dateOnly(initialStartDate) : null,
+        initialEndDate =
+            initialEndDate != null ? utils.dateOnly(initialEndDate) : null,
+        assert(firstDate != null),
+        assert(lastDate != null),
+        firstDate = utils.dateOnly(firstDate),
+        lastDate = utils.dateOnly(lastDate),
+        currentDate = utils.dateOnly(currentDate ?? DateTime.now()),
+        super(key: key) {
     assert(
-      this.initialStartDate == null || this.initialEndDate == null || !this.initialStartDate.isAfter(initialEndDate),
-      'initialStartDate must be on or before initialEndDate.'
-    );
-    assert(
-      !this.lastDate.isBefore(this.firstDate),
-      'firstDate must be on or before lastDate.'
-    );
+        this.initialStartDate == null ||
+            this.initialEndDate == null ||
+            !this.initialStartDate.isAfter(initialEndDate),
+        'initialStartDate must be on or before initialEndDate.');
+    assert(!this.lastDate.isBefore(this.firstDate),
+        'firstDate must be on or before lastDate.');
   }
 
   /// The [DateTime] that represents the start of the initial date range selection.
@@ -86,7 +87,8 @@ class CalendarDateRangePicker extends StatefulWidget {
   final ValueChanged<DateTime> onEndDateChanged;
 
   @override
-  _CalendarDateRangePickerState createState() => _CalendarDateRangePickerState();
+  _CalendarDateRangePickerState createState() =>
+      _CalendarDateRangePickerState();
 }
 
 class _CalendarDateRangePickerState extends State<CalendarDateRangePicker> {
@@ -135,7 +137,8 @@ class _CalendarDateRangePickerState extends State<CalendarDateRangePicker> {
     }
   }
 
-  int get _numberOfMonths => utils.monthDelta(widget.firstDate, widget.lastDate) + 1;
+  int get _numberOfMonths =>
+      utils.monthDelta(widget.firstDate, widget.lastDate) + 1;
 
   void _vibrate() {
     switch (Theme.of(context).platform) {
@@ -160,7 +163,9 @@ class _CalendarDateRangePickerState extends State<CalendarDateRangePicker> {
   void _updateSelection(DateTime date) {
     _vibrate();
     setState(() {
-      if (_startDate != null && _endDate == null && !date.isBefore(_startDate)) {
+      if (_startDate != null &&
+          _endDate == null &&
+          !date.isBefore(_startDate)) {
         _endDate = date;
         widget.onEndDateChanged?.call(_endDate);
       } else {
@@ -174,11 +179,13 @@ class _CalendarDateRangePickerState extends State<CalendarDateRangePicker> {
     });
   }
 
-  Widget _buildMonthItem(BuildContext context, int index, bool beforeInitialMonth) {
+  Widget _buildMonthItem(
+      BuildContext context, int index, bool beforeInitialMonth) {
     final int monthIndex = beforeInitialMonth
-      ? _initialMonthIndex - index - 1
-      : _initialMonthIndex + index;
-    final DateTime month = utils.addMonthsToMonthDate(widget.firstDate, monthIndex);
+        ? _initialMonthIndex - index - 1
+        : _initialMonthIndex + index;
+    final DateTime month =
+        utils.addMonthsToMonthDate(widget.firstDate, monthIndex);
     return _MonthItem(
       selectedDateStart: _startDate,
       selectedDateEnd: _endDate,
@@ -202,7 +209,8 @@ class _CalendarDateRangePickerState extends State<CalendarDateRangePicker> {
           child: _CalendarKeyboardNavigator(
             firstDate: widget.firstDate,
             lastDate: widget.lastDate,
-            initialFocusedDay: _startDate ?? widget.initialStartDate ?? widget.currentDate,
+            initialFocusedDay:
+                _startDate ?? widget.initialStartDate ?? widget.currentDate,
             // In order to prevent performance issues when displaying the
             // correct initial month, 2 `SliverList`s are used to split the
             // months. The first item in the second SliverList is the initial
@@ -214,14 +222,16 @@ class _CalendarDateRangePickerState extends State<CalendarDateRangePicker> {
               slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) => _buildMonthItem(context, index, true),
+                    (BuildContext context, int index) =>
+                        _buildMonthItem(context, index, true),
                     childCount: _initialMonthIndex,
                   ),
                 ),
                 SliverList(
                   key: sliverAfterKey,
                   delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) => _buildMonthItem(context, index, false),
+                    (BuildContext context, int index) =>
+                        _buildMonthItem(context, index, false),
                     childCount: _numberOfMonths - _initialMonthIndex,
                   ),
                 ),
@@ -249,12 +259,13 @@ class _CalendarKeyboardNavigator extends StatefulWidget {
   final DateTime initialFocusedDay;
 
   @override
-  _CalendarKeyboardNavigatorState createState() => _CalendarKeyboardNavigatorState();
+  _CalendarKeyboardNavigatorState createState() =>
+      _CalendarKeyboardNavigatorState();
 }
 
-class _CalendarKeyboardNavigatorState extends State<_CalendarKeyboardNavigator> {
-
-  Map<LogicalKeySet, Intent> _shortcutMap;
+class _CalendarKeyboardNavigatorState
+    extends State<_CalendarKeyboardNavigator> {
+  Map<dynamic, Intent> _shortcutMap;
   Map<Type, Action<Intent>> _actionMap;
   FocusNode _dayGridFocus;
   TraversalDirection _dayTraversalDirection;
@@ -264,16 +275,14 @@ class _CalendarKeyboardNavigatorState extends State<_CalendarKeyboardNavigator> 
   void initState() {
     super.initState();
 
-    _shortcutMap = <LogicalKeySet, Intent>{
-      LogicalKeySet(LogicalKeyboardKey.arrowLeft): const DirectionalFocusIntent(TraversalDirection.left),
-      LogicalKeySet(LogicalKeyboardKey.arrowRight): const DirectionalFocusIntent(TraversalDirection.right),
-      LogicalKeySet(LogicalKeyboardKey.arrowDown): const DirectionalFocusIntent(TraversalDirection.down),
-      LogicalKeySet(LogicalKeyboardKey.arrowUp): const DirectionalFocusIntent(TraversalDirection.up),
-    };
+    _shortcutMap = <dynamic, Intent>{};
     _actionMap = <Type, Action<Intent>>{
-      NextFocusIntent: CallbackAction<NextFocusIntent>(onInvoke: _handleGridNextFocus),
-      PreviousFocusIntent: CallbackAction<PreviousFocusIntent>(onInvoke: _handleGridPreviousFocus),
-      DirectionalFocusIntent: CallbackAction<DirectionalFocusIntent>(onInvoke: _handleDirectionFocus),
+      NextFocusIntent:
+          CallbackAction<NextFocusIntent>(onInvoke: _handleGridNextFocus),
+      PreviousFocusIntent: CallbackAction<PreviousFocusIntent>(
+          onInvoke: _handleGridPreviousFocus),
+      DirectionalFocusIntent: CallbackAction<DirectionalFocusIntent>(
+          onInvoke: _handleDirectionFocus),
     };
     _dayGridFocus = FocusNode(debugLabel: 'Day Grid');
   }
@@ -316,7 +325,8 @@ class _CalendarKeyboardNavigatorState extends State<_CalendarKeyboardNavigator> 
   void _handleDirectionFocus(DirectionalFocusIntent intent) {
     assert(_focusedDay != null);
     setState(() {
-      final DateTime nextDate = _nextDateInDirection(_focusedDay, intent.direction);
+      final DateTime nextDate =
+          _nextDateInDirection(_focusedDay, intent.direction);
       if (nextDate != null) {
         _focusedDay = nextDate;
         _dayTraversalDirection = intent.direction;
@@ -324,14 +334,16 @@ class _CalendarKeyboardNavigatorState extends State<_CalendarKeyboardNavigator> 
     });
   }
 
-  static const Map<TraversalDirection, int> _directionOffset = <TraversalDirection, int>{
+  static const Map<TraversalDirection, int> _directionOffset =
+      <TraversalDirection, int>{
     TraversalDirection.up: -DateTime.daysPerWeek,
     TraversalDirection.right: 1,
     TraversalDirection.down: DateTime.daysPerWeek,
     TraversalDirection.left: -1,
   };
 
-  int _dayDirectionOffset(TraversalDirection traversalDirection, TextDirection textDirection) {
+  int _dayDirectionOffset(
+      TraversalDirection traversalDirection, TextDirection textDirection) {
     // Swap left and right if the text direction if RTL
     if (textDirection == TextDirection.rtl) {
       if (traversalDirection == TraversalDirection.left)
@@ -344,8 +356,10 @@ class _CalendarKeyboardNavigatorState extends State<_CalendarKeyboardNavigator> 
 
   DateTime _nextDateInDirection(DateTime date, TraversalDirection direction) {
     final TextDirection textDirection = Directionality.of(context);
-    final DateTime nextDate = utils.addDaysToDate(date, _dayDirectionOffset(direction, textDirection));
-    if (!nextDate.isBefore(widget.firstDate) && !nextDate.isAfter(widget.lastDate)) {
+    final DateTime nextDate = utils.addDaysToDate(
+        date, _dayDirectionOffset(direction, textDirection));
+    if (!nextDate.isBefore(widget.firstDate) &&
+        !nextDate.isAfter(widget.lastDate)) {
       return nextDate;
     }
     return null;
@@ -384,14 +398,14 @@ class _FocusedDate extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_FocusedDate oldWidget) {
-    return !utils.isSameDay(date, oldWidget.date) || scrollDirection != oldWidget.scrollDirection;
+    return !utils.isSameDay(date, oldWidget.date) ||
+        scrollDirection != oldWidget.scrollDirection;
   }
 
   static _FocusedDate of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_FocusedDate>();
   }
 }
-
 
 class _DayHeaders extends StatelessWidget {
   /// Builds widgets showing abbreviated days of week. The first widget in the
@@ -412,15 +426,15 @@ class _DayHeaders extends StatelessWidget {
   /// _ _ _ _ 1 2 3
   /// 4 5 6 7 8 9 10
   /// ```
-  List<Widget> _getDayHeaders(TextStyle headerStyle, MaterialLocalizations localizations) {
+  List<Widget> _getDayHeaders(
+      TextStyle headerStyle, MaterialLocalizations localizations) {
     final List<Widget> result = <Widget>[];
     for (int i = localizations.firstDayOfWeekIndex; true; i = (i + 1) % 7) {
       final String weekday = localizations.narrowWeekdays[i];
       result.add(ExcludeSemantics(
         child: Center(child: Text(weekday, style: headerStyle)),
       ));
-      if (i == (localizations.firstDayOfWeekIndex - 1) % 7)
-        break;
+      if (i == (localizations.firstDayOfWeekIndex - 1) % 7) break;
     }
     return result;
   }
@@ -429,8 +443,10 @@ class _DayHeaders extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final ColorScheme colorScheme = themeData.colorScheme;
-    final TextStyle textStyle = themeData.textTheme.subtitle2.apply(color: colorScheme.onSurface);
-    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final TextStyle textStyle =
+        themeData.textTheme.subtitle2.apply(color: colorScheme.onSurface);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
     final List<Widget> labels = _getDayHeaders(textStyle, localizations);
 
     // Add leading and trailing containers for edges of the custom grid layout.
@@ -440,8 +456,8 @@ class _DayHeaders extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).orientation == Orientation.landscape
-          ? _maxCalendarWidthLandscape
-          : _maxCalendarWidthPortrait,
+            ? _maxCalendarWidthLandscape
+            : _maxCalendarWidthPortrait,
         maxHeight: _monthItemRowHeight,
       ),
       child: GridView.custom(
@@ -461,7 +477,9 @@ class _MonthItemGridDelegate extends SliverGridDelegate {
 
   @override
   SliverGridLayout getLayout(SliverConstraints constraints) {
-    final double tileWidth = (constraints.crossAxisExtent - 2 * _horizontalPadding) / DateTime.daysPerWeek;
+    final double tileWidth =
+        (constraints.crossAxisExtent - 2 * _horizontalPadding) /
+            DateTime.daysPerWeek;
     return _MonthSliverGridLayout(
       crossAxisCount: DateTime.daysPerWeek + 2,
       dayChildWidth: tileWidth,
@@ -488,10 +506,10 @@ class _MonthSliverGridLayout extends SliverGridLayout {
     @required this.dayChildWidth,
     @required this.edgeChildWidth,
     @required this.reverseCrossAxis,
-  }) : assert(crossAxisCount != null && crossAxisCount > 0),
-       assert(dayChildWidth != null && dayChildWidth >= 0),
-       assert(edgeChildWidth != null && edgeChildWidth >= 0),
-       assert(reverseCrossAxis != null);
+  })  : assert(crossAxisCount != null && crossAxisCount > 0),
+        assert(dayChildWidth != null && dayChildWidth >= 0),
+        assert(edgeChildWidth != null && edgeChildWidth >= 0),
+        assert(reverseCrossAxis != null);
 
   /// The number of children in the cross axis.
   final int crossAxisCount;
@@ -537,10 +555,9 @@ class _MonthSliverGridLayout extends SliverGridLayout {
 
   double _getCrossAxisOffset(double crossAxisStart, bool isPadding) {
     if (reverseCrossAxis) {
-      return
-        ((crossAxisCount - 2) * dayChildWidth + 2 * edgeChildWidth) -
-        crossAxisStart -
-        (isPadding ? edgeChildWidth : dayChildWidth);
+      return ((crossAxisCount - 2) * dayChildWidth + 2 * edgeChildWidth) -
+          crossAxisStart -
+          (isPadding ? edgeChildWidth : dayChildWidth);
     }
     return crossAxisStart;
   }
@@ -548,8 +565,10 @@ class _MonthSliverGridLayout extends SliverGridLayout {
   @override
   SliverGridGeometry getGeometryForChildIndex(int index) {
     final int adjustedIndex = index % crossAxisCount;
-    final bool isEdge = adjustedIndex == 0 || adjustedIndex == crossAxisCount - 1;
-    final double crossAxisStart = math.max(0, (adjustedIndex - 1) * dayChildWidth + edgeChildWidth);
+    final bool isEdge =
+        adjustedIndex == 0 || adjustedIndex == crossAxisCount - 1;
+    final double crossAxisStart =
+        math.max(0, (adjustedIndex - 1) * dayChildWidth + edgeChildWidth);
 
     return SliverGridGeometry(
       scrollOffset: (index ~/ crossAxisCount) * _rowHeight,
@@ -584,19 +603,23 @@ class _MonthItem extends StatefulWidget {
     @required this.lastDate,
     @required this.displayedMonth,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : assert(firstDate != null),
-       assert(lastDate != null),
-       assert(!firstDate.isAfter(lastDate)),
-       assert(selectedDateStart == null || !selectedDateStart.isBefore(firstDate)),
-       assert(selectedDateEnd == null || !selectedDateEnd.isBefore(firstDate)),
-       assert(selectedDateStart == null || !selectedDateStart.isAfter(lastDate)),
-       assert(selectedDateEnd == null || !selectedDateEnd.isAfter(lastDate)),
-       assert(selectedDateStart == null || selectedDateEnd == null || !selectedDateStart.isAfter(selectedDateEnd)),
-       assert(currentDate != null),
-       assert(onChanged != null),
-       assert(displayedMonth != null),
-       assert(dragStartBehavior != null),
-       super(key: key);
+  })  : assert(firstDate != null),
+        assert(lastDate != null),
+        assert(!firstDate.isAfter(lastDate)),
+        assert(selectedDateStart == null ||
+            !selectedDateStart.isBefore(firstDate)),
+        assert(selectedDateEnd == null || !selectedDateEnd.isBefore(firstDate)),
+        assert(
+            selectedDateStart == null || !selectedDateStart.isAfter(lastDate)),
+        assert(selectedDateEnd == null || !selectedDateEnd.isAfter(lastDate)),
+        assert(selectedDateStart == null ||
+            selectedDateEnd == null ||
+            !selectedDateStart.isAfter(selectedDateEnd)),
+        assert(currentDate != null),
+        assert(onChanged != null),
+        assert(displayedMonth != null),
+        assert(dragStartBehavior != null),
+        super(key: key);
 
   /// The currently selected start date.
   ///
@@ -653,11 +676,12 @@ class _MonthItemState extends State<_MonthItem> {
   @override
   void initState() {
     super.initState();
-    final int daysInMonth = utils.getDaysInMonth(widget.displayedMonth.year, widget.displayedMonth.month);
+    final int daysInMonth = utils.getDaysInMonth(
+        widget.displayedMonth.year, widget.displayedMonth.month);
     _dayFocusNodes = List<FocusNode>.generate(
         daysInMonth,
-        (int index) => FocusNode(skipTraversal: true, debugLabel: 'Day ${index + 1}')
-    );
+        (int index) =>
+            FocusNode(skipTraversal: true, debugLabel: 'Day ${index + 1}'));
   }
 
   @override
@@ -665,7 +689,8 @@ class _MonthItemState extends State<_MonthItem> {
     super.didChangeDependencies();
     // Check to see if the focused date is in this month, if so focus it.
     final DateTime focusedDate = _FocusedDate.of(context)?.date;
-    if (focusedDate != null && utils.isSameMonth(widget.displayedMonth, focusedDate)) {
+    if (focusedDate != null &&
+        utils.isSameMonth(widget.displayedMonth, focusedDate)) {
       _dayFocusNodes[focusedDate.day - 1].requestFocus();
     }
   }
@@ -684,9 +709,11 @@ class _MonthItemState extends State<_MonthItem> {
 
   void _dayFocusChanged(bool focused) {
     if (focused) {
-      final TraversalDirection focusDirection = _FocusedDate.of(context)?.scrollDirection;
+      final TraversalDirection focusDirection =
+          _FocusedDate.of(context)?.scrollDirection;
       if (focusDirection != null) {
-        ScrollPositionAlignmentPolicy policy = ScrollPositionAlignmentPolicy.explicit;
+        ScrollPositionAlignmentPolicy policy =
+            ScrollPositionAlignmentPolicy.explicit;
         switch (focusDirection) {
           case TraversalDirection.up:
           case TraversalDirection.left:
@@ -697,7 +724,8 @@ class _MonthItemState extends State<_MonthItem> {
             policy = ScrollPositionAlignmentPolicy.keepVisibleAtEnd;
             break;
         }
-        Scrollable.ensureVisible(primaryFocus.context,
+        Scrollable.ensureVisible(
+          primaryFocus.context,
           duration: _monthScrollDuration,
           alignmentPolicy: policy,
         );
@@ -705,26 +733,32 @@ class _MonthItemState extends State<_MonthItem> {
     }
   }
 
-  Widget _buildDayItem(BuildContext context, DateTime dayToBuild, int firstDayOffset, int daysInMonth) {
+  Widget _buildDayItem(BuildContext context, DateTime dayToBuild,
+      int firstDayOffset, int daysInMonth) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
-    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
     final TextDirection textDirection = Directionality.of(context);
     final Color highlightColor = _highlightColor(context);
     final int day = dayToBuild.day;
 
-    final bool isDisabled = dayToBuild.isAfter(widget.lastDate) || dayToBuild.isBefore(widget.firstDate);
+    final bool isDisabled = dayToBuild.isAfter(widget.lastDate) ||
+        dayToBuild.isBefore(widget.firstDate);
 
     BoxDecoration decoration;
     TextStyle itemStyle = textTheme.bodyText2;
 
-    final bool isRangeSelected = widget.selectedDateStart != null && widget.selectedDateEnd != null;
-    final bool isSelectedDayStart = widget.selectedDateStart != null && dayToBuild.isAtSameMomentAs(widget.selectedDateStart);
-    final bool isSelectedDayEnd = widget.selectedDateEnd != null && dayToBuild.isAtSameMomentAs(widget.selectedDateEnd);
+    final bool isRangeSelected =
+        widget.selectedDateStart != null && widget.selectedDateEnd != null;
+    final bool isSelectedDayStart = widget.selectedDateStart != null &&
+        dayToBuild.isAtSameMomentAs(widget.selectedDateStart);
+    final bool isSelectedDayEnd = widget.selectedDateEnd != null &&
+        dayToBuild.isAtSameMomentAs(widget.selectedDateEnd);
     final bool isInRange = isRangeSelected &&
-      dayToBuild.isAfter(widget.selectedDateStart) &&
-      dayToBuild.isBefore(widget.selectedDateEnd);
+        dayToBuild.isAfter(widget.selectedDateStart) &&
+        dayToBuild.isBefore(widget.selectedDateEnd);
 
     _HighlightPainter highlightPainter;
 
@@ -737,10 +771,11 @@ class _MonthItemState extends State<_MonthItem> {
         shape: BoxShape.circle,
       );
 
-      if (isRangeSelected && widget.selectedDateStart != widget.selectedDateEnd) {
+      if (isRangeSelected &&
+          widget.selectedDateStart != widget.selectedDateEnd) {
         final _HighlightPainterStyle style = isSelectedDayStart
-          ? _HighlightPainterStyle.highlightTrailing
-          : _HighlightPainterStyle.highlightLeading;
+            ? _HighlightPainterStyle.highlightTrailing
+            : _HighlightPainterStyle.highlightLeading;
         highlightPainter = _HighlightPainter(
           color: highlightColor,
           style: style,
@@ -755,7 +790,8 @@ class _MonthItemState extends State<_MonthItem> {
         textDirection: textDirection,
       );
     } else if (isDisabled) {
-      itemStyle = textTheme.bodyText2?.apply(color: colorScheme.onSurface.withOpacity(0.38));
+      itemStyle = textTheme.bodyText2
+          ?.apply(color: colorScheme.onSurface.withOpacity(0.38));
     } else if (utils.isSameDay(widget.currentDate, dayToBuild)) {
       // The current day gets a different text color and a circle stroke
       // border.
@@ -772,11 +808,14 @@ class _MonthItemState extends State<_MonthItem> {
     // day of month before the rest of the date, as they are looking
     // for the day of month. To do that we prepend day of month to the
     // formatted full date.
-    String semanticLabel = '${localizations.formatDecimal(day)}, ${localizations.formatFullDate(dayToBuild)}';
+    String semanticLabel =
+        '${localizations.formatDecimal(day)}, ${localizations.formatFullDate(dayToBuild)}';
     if (isSelectedDayStart) {
-      semanticLabel = localizations.dateRangeStartDateSemanticLabel(semanticLabel);
+      semanticLabel =
+          localizations.dateRangeStartDateSemanticLabel(semanticLabel);
     } else if (isSelectedDayEnd) {
-      semanticLabel = localizations.dateRangeEndDateSemanticLabel(semanticLabel);
+      semanticLabel =
+          localizations.dateRangeEndDateSemanticLabel(semanticLabel);
     }
 
     Widget dayWidget = Container(
@@ -821,7 +860,8 @@ class _MonthItemState extends State<_MonthItem> {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
     final int year = widget.displayedMonth.year;
     final int month = widget.displayedMonth.month;
     final int daysInMonth = utils.getDaysInMonth(year, month);
@@ -835,8 +875,7 @@ class _MonthItemState extends State<_MonthItem> {
       // 1-based day of month, e.g. 1-31 for January, and 1-29 for February on
       // a leap year.
       final int day = i - dayOffset + 1;
-      if (day > daysInMonth)
-        break;
+      if (day > daysInMonth) break;
       if (day < 1) {
         dayItems.add(Container());
       } else {
@@ -862,38 +901,40 @@ class _MonthItemState extends State<_MonthItem> {
       );
       final List<Widget> weekList = dayItems.sublist(start, end);
 
-      final DateTime dateAfterLeadingPadding = DateTime(year, month, start - dayOffset + 1);
+      final DateTime dateAfterLeadingPadding =
+          DateTime(year, month, start - dayOffset + 1);
       // Only color the edge container if it is after the start date and
       // on/before the end date.
-      final bool isLeadingInRange =
-        !(dayOffset > 0 && i == 0) &&
-        widget.selectedDateStart != null &&
-        widget.selectedDateEnd != null &&
-        dateAfterLeadingPadding.isAfter(widget.selectedDateStart) &&
-        !dateAfterLeadingPadding.isAfter(widget.selectedDateEnd);
+      final bool isLeadingInRange = !(dayOffset > 0 && i == 0) &&
+          widget.selectedDateStart != null &&
+          widget.selectedDateEnd != null &&
+          dateAfterLeadingPadding.isAfter(widget.selectedDateStart) &&
+          !dateAfterLeadingPadding.isAfter(widget.selectedDateEnd);
       weekList.insert(0, _buildEdgeContainer(context, isLeadingInRange));
 
       // Only add a trailing edge container if it is for a full week and not a
       // partial week.
-      if (end < dayItems.length || (end == dayItems.length && dayItems.length % DateTime.daysPerWeek == 0)) {
+      if (end < dayItems.length ||
+          (end == dayItems.length &&
+              dayItems.length % DateTime.daysPerWeek == 0)) {
         final DateTime dateBeforeTrailingPadding =
-        DateTime(year, month, end - dayOffset);
+            DateTime(year, month, end - dayOffset);
         // Only color the edge container if it is on/after the start date and
         // before the end date.
-        final bool isTrailingInRange =
-          widget.selectedDateStart != null &&
-          widget.selectedDateEnd != null &&
-          !dateBeforeTrailingPadding.isBefore(widget.selectedDateStart) &&
-          dateBeforeTrailingPadding.isBefore(widget.selectedDateEnd);
+        final bool isTrailingInRange = widget.selectedDateStart != null &&
+            widget.selectedDateEnd != null &&
+            !dateBeforeTrailingPadding.isBefore(widget.selectedDateStart) &&
+            dateBeforeTrailingPadding.isBefore(widget.selectedDateEnd);
         weekList.add(_buildEdgeContainer(context, isTrailingInRange));
       }
 
       paddedDayItems.addAll(weekList);
     }
 
-    final double maxWidth = MediaQuery.of(context).orientation == Orientation.landscape
-      ? _maxCalendarWidthLandscape
-      : _maxCalendarWidthPortrait;
+    final double maxWidth =
+        MediaQuery.of(context).orientation == Orientation.landscape
+            ? _maxCalendarWidthLandscape
+            : _maxCalendarWidthPortrait;
     return Column(
       children: <Widget>[
         Container(
@@ -904,7 +945,8 @@ class _MonthItemState extends State<_MonthItem> {
           child: ExcludeSemantics(
             child: Text(
               localizations.formatMonthYear(widget.displayedMonth),
-              style: textTheme.bodyText2.apply(color: themeData.colorScheme.onSurface),
+              style: textTheme.bodyText2
+                  .apply(color: themeData.colorScheme.onSurface),
             ),
           ),
         ),
@@ -971,7 +1013,8 @@ class _HighlightPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final Rect rectLeft = Rect.fromLTWH(0, 0, size.width / 2, size.height);
-    final Rect rectRight = Rect.fromLTWH(size.width / 2, 0, size.width / 2, size.height);
+    final Rect rectRight =
+        Rect.fromLTWH(size.width / 2, 0, size.width / 2, size.height);
 
     switch (style) {
       case _HighlightPainterStyle.highlightTrailing:

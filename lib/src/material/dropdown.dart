@@ -171,10 +171,7 @@ class _DropdownMenuItemButtonState<T>
     );
   }
 
-  static final Map<LogicalKeySet, Intent> _webShortcuts =
-      <LogicalKeySet, Intent>{
-    LogicalKeySet(LogicalKeyboardKey.enter): const ActivateIntent(),
-  };
+  static final Map<dynamic, Intent> _webShortcuts = <dynamic, Intent>{};
 
   @override
   Widget build(BuildContext context) {
@@ -202,14 +199,6 @@ class _DropdownMenuItemButtonState<T>
         onFocusChange: _handleFocusChange,
       ),
     );
-    if (kIsWeb) {
-      // On the web, enter doesn't select things, *except* in a <select>
-      // element, which is what a dropdown emulates.
-      child = Shortcuts(
-        shortcuts: _webShortcuts,
-        child: child,
-      );
-    }
     return child;
   }
 }

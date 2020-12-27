@@ -103,7 +103,6 @@ export 'src/widgets/scroll_view.dart';
 export 'src/widgets/scrollable.dart';
 export 'src/widgets/scrollbar.dart';
 export 'src/widgets/semantics_debugger.dart';
-export 'src/widgets/shortcuts.dart';
 export 'src/widgets/single_child_scroll_view.dart';
 export 'src/widgets/size_changed_layout_notifier.dart';
 export 'src/widgets/sliver.dart';

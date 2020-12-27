@@ -476,92 +476,26 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     }
   }
 
-  static final Set<LogicalKeyboardKey> _movementKeys = <LogicalKeyboardKey>{
-    LogicalKeyboardKey.arrowRight,
-    LogicalKeyboardKey.arrowLeft,
-    LogicalKeyboardKey.arrowUp,
-    LogicalKeyboardKey.arrowDown,
-  };
+  static final Set<dynamic> _movementKeys = <dynamic>{};
 
-  static final Set<LogicalKeyboardKey> _shortcutKeys = <LogicalKeyboardKey>{
-    LogicalKeyboardKey.keyA,
-    LogicalKeyboardKey.keyC,
-    LogicalKeyboardKey.keyV,
-    LogicalKeyboardKey.keyX,
-    LogicalKeyboardKey.delete,
-  };
+  static final Set<dynamic> _shortcutKeys = <dynamic>{};
 
-  static final Set<LogicalKeyboardKey> _nonModifierKeys = <LogicalKeyboardKey>{
+  static final Set<dynamic> _nonModifierKeys = <dynamic>{
     ..._shortcutKeys,
     ..._movementKeys,
   };
 
-  static final Set<LogicalKeyboardKey> _modifierKeys = <LogicalKeyboardKey>{
-    LogicalKeyboardKey.shift,
-    LogicalKeyboardKey.control,
-    LogicalKeyboardKey.alt,
-  };
+  static final Set<dynamic> _modifierKeys = <dynamic>{};
 
-  static final Set<LogicalKeyboardKey> _macOsModifierKeys =
-      <LogicalKeyboardKey>{
-    LogicalKeyboardKey.shift,
-    LogicalKeyboardKey.meta,
-    LogicalKeyboardKey.alt,
-  };
+  static final Set<dynamic> _macOsModifierKeys = <dynamic>{};
 
-  static final Set<LogicalKeyboardKey> _interestingKeys = <LogicalKeyboardKey>{
+  static final Set<dynamic> _interestingKeys = <dynamic>{
     ..._modifierKeys,
     ..._macOsModifierKeys,
     ..._nonModifierKeys,
   };
 
-  void _handleKeyEvent(RawKeyEvent keyEvent) {
-    if (kIsWeb) {
-      // On web platform, we should ignore the key because it's processed already.
-      return;
-    }
-
-    if (keyEvent is! RawKeyDownEvent || onSelectionChanged == null) return;
-    final Set<LogicalKeyboardKey> keysPressed =
-        LogicalKeyboardKey.collapseSynonyms(RawKeyboard.instance.keysPressed);
-    final LogicalKeyboardKey key = keyEvent.logicalKey;
-
-    final bool isMacOS = keyEvent.data is RawKeyEventDataMacOs;
-    if (!_nonModifierKeys.contains(key) ||
-        keysPressed
-                .difference(isMacOS ? _macOsModifierKeys : _modifierKeys)
-                .length >
-            1 ||
-        keysPressed.difference(_interestingKeys).isNotEmpty) {
-      // If the most recently pressed key isn't a non-modifier key, or more than
-      // one non-modifier key is down, or keys other than the ones we're interested in
-      // are pressed, just ignore the keypress.
-      return;
-    }
-
-    // TODO(ianh): It seems to be entirely possible for the selection to be null here, but
-    // all the keyboard handling functions assume it is not.
-    assert(selection != null);
-
-    final bool isWordModifierPressed =
-        isMacOS ? keyEvent.isAltPressed : keyEvent.isControlPressed;
-    final bool isLineModifierPressed =
-        isMacOS ? keyEvent.isMetaPressed : keyEvent.isAltPressed;
-    final bool isShortcutModifierPressed =
-        isMacOS ? keyEvent.isMetaPressed : keyEvent.isControlPressed;
-    if (_movementKeys.contains(key)) {
-      _handleMovement(key,
-          wordModifier: isWordModifierPressed,
-          lineModifier: isLineModifierPressed,
-          shift: keyEvent.isShiftPressed);
-    } else if (isShortcutModifierPressed && _shortcutKeys.contains(key)) {
-      // _handleShortcuts depends on being started in the same stack invocation
-      // as the _handleKeyEvent method
-      _handleShortcuts(key);
-    } else if (key == LogicalKeyboardKey.delete) {
-      _handleDelete();
-    }
-  }
+  void _handleKeyEvent(RawKeyEvent keyEvent) {}
 
   /// Returns the index into the string of the next character boundary after the
   /// given index.
@@ -633,238 +567,17 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
   }
 
   void _handleMovement(
-    LogicalKeyboardKey key, {
+    dynamic key, {
     required bool wordModifier,
     required bool lineModifier,
     required bool shift,
-  }) {
-    if (wordModifier && lineModifier) {
-      // If both modifiers are down, nothing happens on any of the platforms.
-      return;
-    }
-    assert(selection != null);
-
-    TextSelection newSelection = selection!;
-
-    final bool rightArrow = key == LogicalKeyboardKey.arrowRight;
-    final bool leftArrow = key == LogicalKeyboardKey.arrowLeft;
-    final bool upArrow = key == LogicalKeyboardKey.arrowUp;
-    final bool downArrow = key == LogicalKeyboardKey.arrowDown;
-
-    if ((rightArrow || leftArrow) && !(rightArrow && leftArrow)) {
-      // Jump to begin/end of word.
-      if (wordModifier) {
-        // If control/option is pressed, we will decide which way to look for a
-        // word based on which arrow is pressed.
-        if (leftArrow) {
-          // When going left, we want to skip over any whitespace before the word,
-          // so we go back to the first non-whitespace before asking for the word
-          // boundary, since _selectWordAtOffset finds the word boundaries without
-          // including whitespace.
-          final int startPoint =
-              previousCharacter(newSelection.extentOffset, _plainText, false);
-          final TextSelection textSelection =
-              _selectWordAtOffset(TextPosition(offset: startPoint));
-          newSelection =
-              newSelection.copyWith(extentOffset: textSelection.baseOffset);
-        } else {
-          // When going right, we want to skip over any whitespace after the word,
-          // so we go forward to the first non-whitespace character before asking
-          // for the word bounds, since _selectWordAtOffset finds the word
-          // boundaries without including whitespace.
-          final int startPoint =
-              nextCharacter(newSelection.extentOffset, _plainText, false);
-          final TextSelection textSelection =
-              _selectWordAtOffset(TextPosition(offset: startPoint));
-          newSelection =
-              newSelection.copyWith(extentOffset: textSelection.extentOffset);
-        }
-      } else if (lineModifier) {
-        // If control/command is pressed, we will decide which way to expand to
-        // the beginning/end of the line based on which arrow is pressed.
-        if (leftArrow) {
-          // When going left, we want to skip over any whitespace before the line,
-          // so we go back to the first non-whitespace before asking for the line
-          // bounds, since _selectLineAtOffset finds the line boundaries without
-          // including whitespace (like the newline).
-          final int startPoint =
-              previousCharacter(newSelection.extentOffset, _plainText, false);
-          final TextSelection textSelection =
-              _selectLineAtOffset(TextPosition(offset: startPoint));
-          newSelection =
-              newSelection.copyWith(extentOffset: textSelection.baseOffset);
-        } else {
-          // When going right, we want to skip over any whitespace after the line,
-          // so we go forward to the first non-whitespace character before asking
-          // for the line bounds, since _selectLineAtOffset finds the line
-          // boundaries without including whitespace (like the newline).
-          final int startPoint =
-              nextCharacter(newSelection.extentOffset, _plainText, false);
-          final TextSelection textSelection =
-              _selectLineAtOffset(TextPosition(offset: startPoint));
-          newSelection =
-              newSelection.copyWith(extentOffset: textSelection.extentOffset);
-        }
-      } else {
-        if (rightArrow && newSelection.extentOffset < _plainText.length) {
-          final int nextExtent =
-              nextCharacter(newSelection.extentOffset, _plainText);
-          final int distance = nextExtent - newSelection.extentOffset;
-          newSelection = newSelection.copyWith(extentOffset: nextExtent);
-          if (shift) {
-            _cursorResetLocation += distance;
-          }
-        } else if (leftArrow && newSelection.extentOffset > 0) {
-          final int previousExtent =
-              previousCharacter(newSelection.extentOffset, _plainText);
-          final int distance = newSelection.extentOffset - previousExtent;
-          newSelection = newSelection.copyWith(extentOffset: previousExtent);
-          if (shift) {
-            _cursorResetLocation -= distance;
-          }
-        }
-      }
-    }
-
-    // Handles moving the cursor vertically as well as taking care of the
-    // case where the user moves the cursor to the end or beginning of the text
-    // and then back up or down.
-    if (downArrow || upArrow) {
-      // The caret offset gives a location in the upper left hand corner of
-      // the caret so the middle of the line above is a half line above that
-      // point and the line below is 1.5 lines below that point.
-      final double preferredLineHeight = _textPainter.preferredLineHeight;
-      final double verticalOffset =
-          upArrow ? -0.5 * preferredLineHeight : 1.5 * preferredLineHeight;
-
-      final Offset caretOffset = _textPainter.getOffsetForCaret(
-          TextPosition(offset: newSelection.extentOffset), _caretPrototype);
-      final Offset caretOffsetTranslated =
-          caretOffset.translate(0.0, verticalOffset);
-      final TextPosition position =
-          _textPainter.getPositionForOffset(caretOffsetTranslated);
-
-      // To account for the possibility where the user vertically highlights
-      // all the way to the top or bottom of the text, we hold the previous
-      // cursor location. This allows us to restore to this position in the
-      // case that the user wants to unhighlight some text.
-      if (position.offset == newSelection.extentOffset) {
-        if (downArrow) {
-          newSelection = newSelection.copyWith(extentOffset: _plainText.length);
-        } else if (upArrow) {
-          newSelection = newSelection.copyWith(extentOffset: 0);
-        }
-        _wasSelectingVerticallyWithKeyboard = shift;
-      } else if (_wasSelectingVerticallyWithKeyboard && shift) {
-        newSelection =
-            newSelection.copyWith(extentOffset: _cursorResetLocation);
-        _wasSelectingVerticallyWithKeyboard = false;
-      } else {
-        newSelection = newSelection.copyWith(extentOffset: position.offset);
-        _cursorResetLocation = newSelection.extentOffset;
-      }
-    }
-
-    // Just place the collapsed selection at the end or beginning of the region
-    // if shift isn't down.
-    if (!shift) {
-      // We want to put the cursor at the correct location depending on which
-      // arrow is used while there is a selection.
-      int newOffset = newSelection.extentOffset;
-      if (!selection!.isCollapsed) {
-        if (leftArrow) {
-          newOffset = newSelection.baseOffset < newSelection.extentOffset
-              ? newSelection.baseOffset
-              : newSelection.extentOffset;
-        } else if (rightArrow) {
-          newOffset = newSelection.baseOffset > newSelection.extentOffset
-              ? newSelection.baseOffset
-              : newSelection.extentOffset;
-        }
-      }
-      newSelection =
-          TextSelection.fromPosition(TextPosition(offset: newOffset));
-    }
-
-    // Update the text selection delegate so that the engine knows what we did.
-    textSelectionDelegate.textEditingValue = textSelectionDelegate
-        .textEditingValue
-        .copyWith(selection: newSelection);
-    _handleSelectionChange(
-      newSelection,
-      SelectionChangedCause.keyboard,
-    );
-  }
+  }) {}
 
   // Handles shortcut functionality including cut, copy, paste and select all
   // using control/command + (X, C, V, A).
-  Future<void> _handleShortcuts(LogicalKeyboardKey key) async {
-    assert(selection != null);
-    assert(_shortcutKeys.contains(key), 'shortcut key $key not recognized.');
-    if (key == LogicalKeyboardKey.keyC) {
-      if (!selection!.isCollapsed) {
-        Clipboard.setData(
-            ClipboardData(text: selection!.textInside(_plainText)));
-      }
-      return;
-    }
-    if (key == LogicalKeyboardKey.keyX) {
-      if (!selection!.isCollapsed) {
-        Clipboard.setData(
-            ClipboardData(text: selection!.textInside(_plainText)));
-        textSelectionDelegate.textEditingValue = TextEditingValue(
-          text: selection!.textBefore(_plainText) +
-              selection!.textAfter(_plainText),
-          selection: TextSelection.collapsed(offset: selection!.start),
-        );
-      }
-      return;
-    }
-    if (key == LogicalKeyboardKey.keyV) {
-      // Snapshot the input before using `await`.
-      // See https://github.com/flutter/flutter/issues/11427
-      final TextEditingValue value = textSelectionDelegate.textEditingValue;
-      final ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
-      if (data != null) {
-        textSelectionDelegate.textEditingValue = TextEditingValue(
-          text: value.selection.textBefore(value.text) +
-              data.text! +
-              value.selection.textAfter(value.text),
-          selection: TextSelection.collapsed(
-              offset: value.selection.start + data.text!.length),
-        );
-      }
-      return;
-    }
-    if (key == LogicalKeyboardKey.keyA) {
-      _handleSelectionChange(
-        selection!.copyWith(
-          baseOffset: 0,
-          extentOffset: textSelectionDelegate.textEditingValue.text.length,
-        ),
-        SelectionChangedCause.keyboard,
-      );
-      return;
-    }
-  }
+  Future<void> _handleShortcuts(dynamic key) async {}
 
-  void _handleDelete() {
-    assert(_selection != null);
-    final String textAfter = selection!.textAfter(_plainText);
-    if (textAfter.isNotEmpty) {
-      final int deleteCount = nextCharacter(0, textAfter);
-      textSelectionDelegate.textEditingValue = TextEditingValue(
-        text: selection!.textBefore(_plainText) +
-            selection!.textAfter(_plainText).substring(deleteCount),
-        selection: TextSelection.collapsed(offset: selection!.start),
-      );
-    } else {
-      textSelectionDelegate.textEditingValue = TextEditingValue(
-        text: selection!.textBefore(_plainText),
-        selection: TextSelection.collapsed(offset: selection!.start),
-      );
-    }
-  }
+  void _handleDelete() {}
 
   /// Marks the render object as needing to be laid out again and have its text
   /// metrics recomputed.
