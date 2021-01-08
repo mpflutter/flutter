@@ -40,7 +40,11 @@ VoidCallback? scheduleFrameCallback = () {
 
 /// The Web implementation of [ui.Window].
 class MockWindow extends Window {
-  MockWindow();
+  MockWindow() {
+    DeviceInfo.listenDeviceSizeChanged(() {
+      onMetricsChanged?.call();
+    });
+  }
 
   double get devicePixelRatio => DeviceInfo.devicePixelRatio;
   Size get physicalSize =>
@@ -64,9 +68,13 @@ class MockWindow extends Window {
 
   set onPlatformBrightnessChanged(VoidCallback? callback) {}
 
-  VoidCallback? get onMetricsChanged => null;
+  VoidCallback? _onMetricsChanged;
 
-  set onMetricsChanged(VoidCallback? callback) {}
+  VoidCallback? get onMetricsChanged => _onMetricsChanged;
+
+  set onMetricsChanged(VoidCallback? callback) {
+    _onMetricsChanged = callback;
+  }
 
   Locale? get locale => null;
 
