@@ -55,7 +55,14 @@ class TextParentData extends ContainerBoxParentData<RenderBox> {
   }
 }
 
-class RenderParagraph extends RenderBox {
+class RenderParagraph extends RenderBox
+    with ContainerRenderObjectMixin<RenderBox, TextParentData> {
+  @override
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! TextParentData)
+      child.parentData = TextParentData();
+  }
+
   @override
   void performLayout() {
     size = _sizeForConstraints(constraints);
