@@ -1032,8 +1032,7 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
     } else {
       _updateNavigator();
     }
-    _locale = _resolveLocales(
-        WidgetsBinding.instance.window.locales, widget.supportedLocales);
+    _locale = null;
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -1332,14 +1331,7 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeLocales(List<Locale> locales) {
-    final Locale newLocale = _resolveLocales(locales, widget.supportedLocales);
-    if (newLocale != _locale) {
-      setState(() {
-        _locale = newLocale;
-      });
-    }
-  }
+  void didChangeLocales(List<Locale> locales) {}
 
   // Combine the Localizations for Widgets with the ones contributed
   // by the localizationsDelegates parameter, if any. Only the first delegate
@@ -1445,96 +1437,12 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       );
     }
 
-    PerformanceOverlay performanceOverlay;
-    // We need to push a performance overlay if any of the display or checkerboarding
-    // options are set.
-    if (widget.showPerformanceOverlay ||
-        WidgetsApp.showPerformanceOverlayOverride) {
-      performanceOverlay = PerformanceOverlay.allEnabled(
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
-      );
-    } else if (widget.checkerboardRasterCacheImages ||
-        widget.checkerboardOffscreenLayers) {
-      performanceOverlay = PerformanceOverlay(
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
-      );
-    }
-    if (performanceOverlay != null) {
-      result = Stack(
-        children: <Widget>[
-          result,
-          Positioned(
-              top: 0.0, left: 0.0, right: 0.0, child: performanceOverlay),
-        ],
-      );
-    }
+    Widget title = result;
 
-    if (widget.showSemanticsDebugger) {
-      result = SemanticsDebugger(
-        child: result,
-      );
-    }
-
-    assert(() {
-      if (widget.debugShowWidgetInspector ||
-          WidgetsApp.debugShowWidgetInspectorOverride) {
-        result = WidgetInspector(
-          child: result,
-          selectButtonBuilder: widget.inspectorSelectButtonBuilder,
-        );
-      }
-      if (widget.debugShowCheckedModeBanner &&
-          WidgetsApp.debugAllowBannerOverride) {
-        result = CheckedModeBanner(
-          child: result,
-        );
-      }
-      return true;
-    }());
-
-    Widget title;
-    if (widget.onGenerateTitle != null) {
-      title = Builder(
-        // This Builder exists to provide a context below the Localizations widget.
-        // The onGenerateTitle callback can refer to Localizations via its context
-        // parameter.
-        builder: (BuildContext context) {
-          final String title = widget.onGenerateTitle(context);
-          assert(
-              title != null, 'onGenerateTitle must return a non-null String');
-          return Title(
-            title: title,
-            color: widget.color,
-            child: result,
-          );
-        },
-      );
-    } else {
-      title = Title(
-        title: widget.title,
-        color: widget.color,
-        child: result,
-      );
-    }
-
-    final Locale appLocale = widget.locale != null
-        ? _resolveLocales(<Locale>[widget.locale], widget.supportedLocales)
-        : _locale;
-
-    assert(_debugCheckLocalizations(appLocale));
-    return Actions(
-      actions: widget.actions ?? WidgetsApp.defaultActions,
-      child: FocusTraversalGroup(
-        policy: ReadingOrderTraversalPolicy(),
-        child: _MediaQueryFromWindow(
-          child: Localizations(
-            locale: appLocale,
-            delegates: _localizationsDelegates.toList(),
-            child: title,
-          ),
-        ),
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: _MediaQueryFromWindow(
+        child: title,
       ),
     );
   }

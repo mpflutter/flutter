@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
 
+import 'container.dart';
 import 'actions.dart';
 import 'basic.dart';
 import 'focus_manager.dart';
@@ -281,107 +282,10 @@ abstract class TransitionRoute<T> extends OverlayRoute<T> {
   // caller must reset this property to null after it is called.
   VoidCallback _trainHoppingListenerRemover;
 
-  void _updateSecondaryAnimation(Route<dynamic> nextRoute) {
-    // There is an existing train hopping in progress. Unfortunately, we cannot
-    // dispose current train hopping animation until we replace it with a new
-    // animation.
-    final VoidCallback previousTrainHoppingListenerRemover =
-        _trainHoppingListenerRemover;
-    _trainHoppingListenerRemover = null;
-
-    if (nextRoute is TransitionRoute<dynamic> &&
-        canTransitionTo(nextRoute) &&
-        nextRoute.canTransitionFrom(this)) {
-      final Animation<double> current = _secondaryAnimation.parent;
-      if (current != null) {
-        final Animation<double> currentTrain =
-            current is TrainHoppingAnimation ? current.currentTrain : current;
-        final Animation<double> nextTrain = nextRoute._animation;
-        if (currentTrain.value == nextTrain.value ||
-            nextTrain.status == AnimationStatus.completed ||
-            nextTrain.status == AnimationStatus.dismissed) {
-          _setSecondaryAnimation(nextTrain, nextRoute.completed);
-        } else {
-          // Two trains animate at different values. We have to do train hopping.
-          // There are three possibilities of train hopping:
-          //  1. We hop on the nextTrain when two trains meet in the middle using
-          //     TrainHoppingAnimation.
-          //  2. There is no chance to hop on nextTrain because two trains never
-          //     cross each other. We have to directly set the animation to
-          //     nextTrain once the nextTrain stops animating.
-          //  3. A new _updateSecondaryAnimation is called before train hopping
-          //     finishes. We leave a listener remover for the next call to
-          //     properly clean up the existing train hopping.
-          TrainHoppingAnimation newAnimation;
-          void _jumpOnAnimationEnd(AnimationStatus status) {
-            switch (status) {
-              case AnimationStatus.completed:
-              case AnimationStatus.dismissed:
-                // The nextTrain has stopped animating without train hopping.
-                // Directly sets the secondary animation and disposes the
-                // TrainHoppingAnimation.
-                _setSecondaryAnimation(nextTrain, nextRoute.completed);
-                if (_trainHoppingListenerRemover != null) {
-                  _trainHoppingListenerRemover();
-                  _trainHoppingListenerRemover = null;
-                }
-                break;
-              case AnimationStatus.forward:
-              case AnimationStatus.reverse:
-                break;
-            }
-          }
-
-          _trainHoppingListenerRemover = () {
-            nextTrain.removeStatusListener(_jumpOnAnimationEnd);
-            newAnimation?.dispose();
-          };
-          nextTrain.addStatusListener(_jumpOnAnimationEnd);
-          newAnimation = TrainHoppingAnimation(
-            currentTrain,
-            nextTrain,
-            onSwitchedTrain: () {
-              assert(_secondaryAnimation.parent == newAnimation);
-              assert(newAnimation.currentTrain == nextRoute._animation);
-              // We can hop on the nextTrain, so we don't need to listen to
-              // whether the nextTrain has stopped.
-              _setSecondaryAnimation(
-                  newAnimation.currentTrain, nextRoute.completed);
-              if (_trainHoppingListenerRemover != null) {
-                _trainHoppingListenerRemover();
-                _trainHoppingListenerRemover = null;
-              }
-            },
-          );
-          _setSecondaryAnimation(newAnimation, nextRoute.completed);
-        }
-      } else {
-        _setSecondaryAnimation(nextRoute._animation, nextRoute.completed);
-      }
-    } else {
-      _setSecondaryAnimation(kAlwaysDismissedAnimation);
-    }
-    // Finally, we dispose any previous train hopping animation because it
-    // has been successfully updated at this point.
-    if (previousTrainHoppingListenerRemover != null) {
-      previousTrainHoppingListenerRemover();
-    }
-  }
+  void _updateSecondaryAnimation(Route<dynamic> nextRoute) {}
 
   void _setSecondaryAnimation(Animation<double> animation,
-      [Future<dynamic> disposed]) {
-    _secondaryAnimation.parent = animation;
-    // Releases the reference to the next route's animation when that route
-    // is disposed.
-    disposed?.then((dynamic _) {
-      if (_secondaryAnimation.parent == animation) {
-        _secondaryAnimation.parent = kAlwaysDismissedAnimation;
-        if (animation is TrainHoppingAnimation) {
-          animation.dispose();
-        }
-      }
-    });
-  }
+      [Future<dynamic> disposed]) {}
 
   /// Returns true if this route supports a transition animation that runs
   /// when [nextRoute] is pushed on top of it or when [nextRoute] is popped
@@ -1097,25 +1001,15 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   @override
   void install() {
     super.install();
-    _animationProxy = ProxyAnimation(super.animation);
-    _secondaryAnimationProxy = ProxyAnimation(super.secondaryAnimation);
   }
 
   @override
   TickerFuture didPush() {
-    if (_scopeKey.currentState != null) {
-      navigator.focusScopeNode
-          .setFirstFocus(_scopeKey.currentState.focusScopeNode);
-    }
     return super.didPush();
   }
 
   @override
   void didAdd() {
-    if (_scopeKey.currentState != null) {
-      navigator.focusScopeNode
-          .setFirstFocus(_scopeKey.currentState.focusScopeNode);
-    }
     super.didAdd();
   }
 
@@ -1292,11 +1186,6 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
     setState(() {
       _offstage = value;
     });
-    _animationProxy.parent =
-        _offstage ? kAlwaysCompleteAnimation : super.animation;
-    _secondaryAnimationProxy.parent =
-        _offstage ? kAlwaysDismissedAnimation : super.secondaryAnimation;
-    changedInternalState();
   }
 
   /// The build context for the subtree containing the primary content of this route.
@@ -1332,12 +1221,6 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   ///    this method checks.
   @override
   Future<RoutePopDisposition> willPop() async {
-    final _ModalScopeState<T> scope = _scopeKey.currentState;
-    assert(scope != null);
-    for (final WillPopCallback callback
-        in List<WillPopCallback>.from(_willPopCallbacks)) {
-      if (await callback() != true) return RoutePopDisposition.doNotPop;
-    }
     return await super.willPop();
   }
 
@@ -1401,11 +1284,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   ///  * [willPop], which runs the callbacks added with this method.
   ///  * [removeScopedWillPopCallback], which removes a callback from the list
   ///    that [willPop] checks.
-  void addScopedWillPopCallback(WillPopCallback callback) {
-    assert(_scopeKey.currentState != null,
-        'Tried to add a willPop callback to a route that is not currently in the tree.');
-    _willPopCallbacks.add(callback);
-  }
+  void addScopedWillPopCallback(WillPopCallback callback) {}
 
   /// Remove one of the callbacks run by [willPop].
   ///
@@ -1414,11 +1293,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   ///  * [Form], which provides an `onWillPop` callback that uses this mechanism.
   ///  * [addScopedWillPopCallback], which adds callback to the list
   ///    checked by [willPop].
-  void removeScopedWillPopCallback(WillPopCallback callback) {
-    assert(_scopeKey.currentState != null,
-        'Tried to remove a willPop callback from a route that is not currently in the tree.');
-    _willPopCallbacks.remove(callback);
-  }
+  void removeScopedWillPopCallback(WillPopCallback callback) {}
 
   /// True if one or more [WillPopCallback] callbacks exist.
   ///
@@ -1445,22 +1320,16 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   @override
   void didChangePrevious(Route<dynamic> previousRoute) {
     super.didChangePrevious(previousRoute);
-    changedInternalState();
   }
 
   @override
   void changedInternalState() {
     super.changedInternalState();
-    setState(() {/* internal state already changed */});
-    _modalBarrier.markNeedsBuild();
-    _modalScope.maintainState = maintainState;
   }
 
   @override
   void changedExternalState() {
     super.changedExternalState();
-    if (_scopeKey.currentState != null)
-      _scopeKey.currentState._forceRebuildPage();
   }
 
   /// Whether this route can be popped.
@@ -1480,58 +1349,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   // one of the builders
   OverlayEntry _modalBarrier;
   Widget _buildModalBarrier(BuildContext context) {
-    Widget barrier;
-    if (barrierColor != null && barrierColor.alpha != 0 && !offstage) {
-      // changedInternalState is called if barrierColor or offstage updates
-      assert(barrierColor != _kTransparent);
-      final Animation<Color> color = animation.drive(
-        ColorTween(
-          begin: _kTransparent,
-          end:
-              barrierColor, // changedInternalState is called if barrierColor updates
-        ).chain(CurveTween(
-            curve:
-                barrierCurve)), // changedInternalState is called if barrierCurve updates
-      );
-      barrier = AnimatedModalBarrier(
-        color: color,
-        dismissible:
-            barrierDismissible, // changedInternalState is called if barrierDismissible updates
-        semanticsLabel:
-            barrierLabel, // changedInternalState is called if barrierLabel updates
-        barrierSemanticsDismissible: semanticsDismissible,
-      );
-    } else {
-      barrier = ModalBarrier(
-        dismissible:
-            barrierDismissible, // changedInternalState is called if barrierDismissible updates
-        semanticsLabel:
-            barrierLabel, // changedInternalState is called if barrierLabel updates
-        barrierSemanticsDismissible: semanticsDismissible,
-      );
-    }
-    if (_filter != null) {
-      barrier = BackdropFilter(
-        filter: _filter,
-        child: barrier,
-      );
-    }
-    barrier = IgnorePointer(
-      ignoring: animation.status ==
-              AnimationStatus
-                  .reverse || // changedInternalState is called when animation.status updates
-          animation.status ==
-              AnimationStatus
-                  .dismissed, // dismissed is possible when doing a manual pop gesture
-      child: barrier,
-    );
-    if (semanticsDismissible && barrierDismissible) {
-      // To be sorted after the _modalScope.
-      barrier = Semantics(
-        sortKey: const OrdinalSortKey(1.0),
-        child: barrier,
-      );
-    }
+    Widget barrier = Container();
     return barrier;
   }
 
