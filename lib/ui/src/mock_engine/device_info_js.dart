@@ -1,24 +1,25 @@
-import 'dart:html';
+import 'dart:js' as js;
 
 class DeviceInfo {
-  static double physicalSizeWidth =
-      (document.body?.clientWidth.toDouble() ?? 0.0) *
-          (document.window as Window).devicePixelRatio.toDouble();
-  static double physicalSizeHeight =
-      (document.body?.clientHeight.toDouble() ?? 0.0) *
-          (document.window as Window).devicePixelRatio.toDouble();
-  static double devicePixelRatio =
-      (document.window as Window).devicePixelRatio.toDouble();
+  static double physicalSizeWidth = js.context['document']['body']
+          ['clientWidth'] /
+      js.context['devicePixelRatio'];
+  static double physicalSizeHeight = js.context['document']['body']
+          ['clientHeight'] /
+      js.context['devicePixelRatio'];
+  static double devicePixelRatio = js.context['devicePixelRatio'];
 
   static void listenDeviceSizeChanged(Function callback) {
-    (document.window as Window).addEventListener('resize', (event) {
-      physicalSizeWidth = (document.body?.clientWidth.toDouble() ?? 0.0) *
-          (document.window as Window).devicePixelRatio.toDouble();
-      physicalSizeHeight = (document.body?.clientHeight.toDouble() ?? 0.0) *
-          (document.window as Window).devicePixelRatio.toDouble();
-      devicePixelRatio =
-          (document.window as Window).devicePixelRatio.toDouble();
-      callback();
-    });
+    js.context.callMethod('addEventListener', [
+      'resize',
+      (event) {
+        physicalSizeWidth = js.context['document']['body']['clientWidth'] /
+            js.context['devicePixelRatio'];
+        physicalSizeHeight = js.context['document']['body']['clientHeight'] /
+            js.context['devicePixelRatio'];
+        devicePixelRatio = js.context['devicePixelRatio'];
+        callback();
+      }
+    ]);
   }
 }
