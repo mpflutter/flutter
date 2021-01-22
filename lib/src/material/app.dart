@@ -654,23 +654,7 @@ class _MaterialScrollBehavior extends ScrollBehavior {
   @override
   Widget buildViewportChrome(
       BuildContext context, Widget child, AxisDirection axisDirection) {
-    // When modifying this function, consider modifying the implementation in
-    // the base class as well.
-    switch (getPlatform(context)) {
-      case TargetPlatform.iOS:
-      case TargetPlatform.linux:
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-        return child;
-      case TargetPlatform.android:
-      case TargetPlatform.fuchsia:
-        return GlowingOverscrollIndicator(
-          child: child,
-          axisDirection: axisDirection,
-          color: Theme.of(context).accentColor,
-        );
-    }
-    return null;
+    return child;
   }
 }
 

@@ -386,45 +386,13 @@ class ScrollableState extends State<Scrollable>
   ScrollPhysics _physics;
 
   // Only call this from places that will definitely trigger a rebuild.
-  void _updatePosition() {
-    _configuration = ScrollConfiguration.of(context);
-    _physics = _configuration.getScrollPhysics(context);
-    if (widget.physics != null) _physics = widget.physics.applyTo(_physics);
-    final ScrollController controller = widget.controller;
-    final ScrollPosition oldPosition = position;
-    if (oldPosition != null) {
-      controller?.detach(oldPosition);
-      // It's important that we not dispose the old position until after the
-      // viewport has had a chance to unregister its listeners from the old
-      // position. So, schedule a microtask to do it.
-      scheduleMicrotask(oldPosition.dispose);
-    }
-
-    _position = controller?.createScrollPosition(_physics, this, oldPosition) ??
-        ScrollPositionWithSingleContext(
-            physics: _physics, context: this, oldPosition: oldPosition);
-    assert(position != null);
-    controller?.attach(position);
-  }
+  void _updatePosition() {}
 
   @override
-  void restoreState(RestorationBucket oldBucket, bool initialRestore) {
-    registerForRestoration(_persistedScrollOffset, 'offset');
-    assert(position != null);
-    if (_persistedScrollOffset.value != null) {
-      position.restoreOffset(_persistedScrollOffset.value,
-          initialRestore: initialRestore);
-    }
-  }
+  void restoreState(RestorationBucket oldBucket, bool initialRestore) {}
 
   @override
-  void saveOffset(double offset) {
-    assert(debugIsSerializableForRestoration(offset));
-    _persistedScrollOffset.value = offset;
-    // [saveOffset] is called after a scrolling ends and it is usually not
-    // followed by a frame. Therefore, manually flush restoration data.
-    ServicesBinding.instance.restorationManager.flushData();
-  }
+  void saveOffset(double offset) {}
 
   @override
   void didChangeDependencies() {
@@ -433,15 +401,7 @@ class ScrollableState extends State<Scrollable>
   }
 
   bool _shouldUpdatePosition(Scrollable oldWidget) {
-    ScrollPhysics newPhysics = widget.physics;
-    ScrollPhysics oldPhysics = oldWidget.physics;
-    do {
-      if (newPhysics?.runtimeType != oldPhysics?.runtimeType) return true;
-      newPhysics = newPhysics?.parent;
-      oldPhysics = oldPhysics?.parent;
-    } while (newPhysics != null || oldPhysics != null);
-
-    return widget.controller?.runtimeType != oldWidget.controller?.runtimeType;
+    return false;
   }
 
   @override
@@ -464,108 +424,25 @@ class ScrollableState extends State<Scrollable>
     super.dispose();
   }
 
-  // SEMANTICS
-
-  final GlobalKey _scrollSemanticsKey = GlobalKey();
-
   @override
   @protected
-  void setSemanticsActions(Set<SemanticsAction> actions) {
-    if (_gestureDetectorKey.currentState != null)
-      _gestureDetectorKey.currentState.replaceSemanticsActions(actions);
-  }
+  void setSemanticsActions(Set<SemanticsAction> actions) {}
 
   // GESTURE RECOGNITION AND POINTER IGNORING
 
   final GlobalKey<RawGestureDetectorState> _gestureDetectorKey =
       GlobalKey<RawGestureDetectorState>();
-  final GlobalKey _ignorePointerKey = GlobalKey();
-
-  // This field is set during layout, and then reused until the next time it is set.
-  Map<Type, GestureRecognizerFactory> _gestureRecognizers =
-      const <Type, GestureRecognizerFactory>{};
-  bool _shouldIgnorePointer = false;
-
-  bool _lastCanDrag;
-  Axis _lastAxisDirection;
 
   @override
   @protected
-  void setCanDrag(bool canDrag) {
-    if (canDrag == _lastCanDrag &&
-        (!canDrag || widget.axis == _lastAxisDirection)) return;
-    if (!canDrag) {
-      _gestureRecognizers = const <Type, GestureRecognizerFactory>{};
-    } else {
-      switch (widget.axis) {
-        case Axis.vertical:
-          _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-                VerticalDragGestureRecognizer>(
-              () => VerticalDragGestureRecognizer(),
-              (VerticalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = _handleDragDown
-                  ..onStart = _handleDragStart
-                  ..onUpdate = _handleDragUpdate
-                  ..onEnd = _handleDragEnd
-                  ..onCancel = _handleDragCancel
-                  ..minFlingDistance = _physics?.minFlingDistance
-                  ..minFlingVelocity = _physics?.minFlingVelocity
-                  ..maxFlingVelocity = _physics?.maxFlingVelocity
-                  ..velocityTrackerBuilder =
-                      _configuration.velocityTrackerBuilder(context)
-                  ..dragStartBehavior = widget.dragStartBehavior;
-              },
-            ),
-          };
-          break;
-        case Axis.horizontal:
-          _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            HorizontalDragGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<
-                    HorizontalDragGestureRecognizer>(
-              () => HorizontalDragGestureRecognizer(),
-              (HorizontalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = _handleDragDown
-                  ..onStart = _handleDragStart
-                  ..onUpdate = _handleDragUpdate
-                  ..onEnd = _handleDragEnd
-                  ..onCancel = _handleDragCancel
-                  ..minFlingDistance = _physics?.minFlingDistance
-                  ..minFlingVelocity = _physics?.minFlingVelocity
-                  ..maxFlingVelocity = _physics?.maxFlingVelocity
-                  ..velocityTrackerBuilder =
-                      _configuration.velocityTrackerBuilder(context)
-                  ..dragStartBehavior = widget.dragStartBehavior;
-              },
-            ),
-          };
-          break;
-      }
-    }
-    _lastCanDrag = canDrag;
-    _lastAxisDirection = widget.axis;
-    if (_gestureDetectorKey.currentState != null)
-      _gestureDetectorKey.currentState
-          .replaceGestureRecognizers(_gestureRecognizers);
-  }
+  void setCanDrag(bool canDrag) {}
 
   @override
   TickerProvider get vsync => this;
 
   @override
   @protected
-  void setIgnorePointer(bool value) {
-    if (_shouldIgnorePointer == value) return;
-    _shouldIgnorePointer = value;
-    if (_ignorePointerKey.currentContext != null) {
-      final RenderIgnorePointer renderBox = _ignorePointerKey.currentContext
-          .findRenderObject() as RenderIgnorePointer;
-      renderBox.ignoring = _shouldIgnorePointer;
-    }
-  }
+  void setIgnorePointer(bool value) {}
 
   @override
   BuildContext get notificationContext => _gestureDetectorKey.currentContext;
@@ -625,47 +502,6 @@ class ScrollableState extends State<Scrollable>
     _drag = null;
   }
 
-  // SCROLL WHEEL
-
-  // Returns the offset that should result from applying [event] to the current
-  // position, taking min/max scroll extent into account.
-  double _targetScrollOffsetForPointerScroll(PointerScrollEvent event) {
-    double delta = widget.axis == Axis.horizontal
-        ? event.scrollDelta.dx
-        : event.scrollDelta.dy;
-
-    if (axisDirectionIsReversed(widget.axisDirection)) {
-      delta *= -1;
-    }
-
-    return math.min(math.max(position.pixels + delta, position.minScrollExtent),
-        position.maxScrollExtent);
-  }
-
-  void _receivedPointerSignal(PointerSignalEvent event) {
-    if (event is PointerScrollEvent && position != null) {
-      final double targetScrollOffset =
-          _targetScrollOffsetForPointerScroll(event);
-      // Only express interest in the event if it would actually result in a scroll.
-      if (targetScrollOffset != position.pixels) {
-        // GestureBinding.instance.pointerSignalResolver
-        //     .register(event, _handlePointerScroll);
-      }
-    }
-  }
-
-  void _handlePointerScroll(PointerEvent event) {
-    assert(event is PointerScrollEvent);
-    if (_physics != null && !_physics.shouldAcceptUserOffset(position)) {
-      return;
-    }
-    final double targetScrollOffset =
-        _targetScrollOffsetForPointerScroll(event as PointerScrollEvent);
-    if (targetScrollOffset != position.pixels) {
-      position.jumpTo(targetScrollOffset);
-    }
-  }
-
   // DESCRIPTION
 
   @override
@@ -682,36 +518,8 @@ class ScrollableState extends State<Scrollable>
     Widget result = _ScrollableScope(
       scrollable: this,
       position: position,
-      // TODO(ianh): Having all these global keys is sad.
-      child: Listener(
-        onPointerSignal: _receivedPointerSignal,
-        child: RawGestureDetector(
-          key: _gestureDetectorKey,
-          gestures: _gestureRecognizers,
-          behavior: HitTestBehavior.opaque,
-          excludeFromSemantics: widget.excludeFromSemantics,
-          child: Semantics(
-            explicitChildNodes: !widget.excludeFromSemantics,
-            child: IgnorePointer(
-              key: _ignorePointerKey,
-              ignoring: _shouldIgnorePointer,
-              ignoringSemantics: false,
-              child: widget.viewportBuilder(context, position),
-            ),
-          ),
-        ),
-      ),
+      child: widget.viewportBuilder(context, position),
     );
-
-    if (!widget.excludeFromSemantics) {
-      result = _ScrollSemantics(
-        key: _scrollSemanticsKey,
-        child: result,
-        position: position,
-        allowImplicitScrolling: _physics.allowImplicitScrolling,
-        semanticChildCount: widget.semanticChildCount,
-      );
-    }
 
     return _configuration.buildViewportChrome(
         context, result, widget.axisDirection);
