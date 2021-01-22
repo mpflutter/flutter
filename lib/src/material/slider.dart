@@ -1416,6 +1416,7 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final double value = _state.positionController.value;
 
     // The visual position is the position of the thumb from 0 to 1 from left
@@ -1667,6 +1668,7 @@ class _RenderValueIndicator extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (_state.paintValueIndicator != null) {
       _state.paintValueIndicator(context, offset);
     }

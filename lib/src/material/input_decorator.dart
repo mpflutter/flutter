@@ -1438,6 +1438,7 @@ class _RenderDecoration extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     void doPaint(RenderBox child) {
       if (child != null)
         context.paintChild(child, _boxParentData(child).offset + offset);

@@ -1354,6 +1354,7 @@ class _RenderRangeSlider extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final double startValue = _state.startPositionController.value;
     final double endValue = _state.endPositionController.value;
 
@@ -1829,6 +1830,7 @@ class _RenderValueIndicator extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (_state.paintBottomValueIndicator != null) {
       _state.paintBottomValueIndicator(context, offset);
     }

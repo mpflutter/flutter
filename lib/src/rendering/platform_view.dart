@@ -184,6 +184,7 @@ class RenderAndroidView extends RenderBox with _PlatformViewGestureMixin {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (_viewController.textureId == null) return;
 
     // Clip the texture if it's going to paint out of the bounds of the renter box
@@ -322,6 +323,7 @@ class RenderUiKitView extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     context.addLayer(PlatformViewLayer(
       rect: offset & size,
       viewId: _viewController.id,
@@ -648,6 +650,7 @@ class PlatformViewRenderBox extends RenderBox with _PlatformViewGestureMixin {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     assert(_controller.viewId != null);
     context.addLayer(PlatformViewLayer(
       rect: offset & size,

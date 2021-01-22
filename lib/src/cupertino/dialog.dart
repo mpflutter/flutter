@@ -805,6 +805,7 @@ class _RenderCupertinoDialog extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final BoxParentData contentParentData =
         contentSection.parentData as BoxParentData;
     contentSection.paint(context, offset + contentParentData.offset);
@@ -1677,6 +1678,7 @@ class _RenderCupertinoDialogActions extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final Canvas canvas = context.canvas;
 
     if (_isSingleButtonRow(size.width)) {

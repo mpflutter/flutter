@@ -368,6 +368,7 @@ class RenderFlow extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     context.pushClipRect(
         needsCompositing, offset, Offset.zero & size, _paintWithDelegate);
   }

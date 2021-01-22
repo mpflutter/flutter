@@ -504,6 +504,7 @@ class _RenderCupertinoSlider extends RenderConstrainedBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     double visualPosition;
     Color leftColor;
     Color rightColor;

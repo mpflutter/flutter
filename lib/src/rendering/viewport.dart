@@ -641,6 +641,7 @@ abstract class RenderViewportBase<
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (firstChild == null) return;
     if (hasVisualOverflow && clipBehavior != Clip.none) {
       context.pushClipRect(

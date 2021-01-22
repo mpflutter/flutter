@@ -120,9 +120,9 @@ class Radio<T> extends StatefulWidget {
     this.visualDensity,
     this.focusNode,
     this.autofocus = false,
-  }) : assert(autofocus != null),
-       assert(toggleable != null),
-       super(key: key);
+  })  : assert(autofocus != null),
+        assert(toggleable != null),
+        super(key: key);
 
   /// The value represented by this radio button.
   final T value;
@@ -303,14 +303,18 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin {
   bool _focused = false;
   void _handleHighlightChanged(bool focused) {
     if (_focused != focused) {
-      setState(() { _focused = focused; });
+      setState(() {
+        _focused = focused;
+      });
     }
   }
 
   bool _hovering = false;
   void _handleHoverChanged(bool hovering) {
     if (_hovering != hovering) {
-      setState(() { _hovering = hovering; });
+      setState(() {
+        _hovering = hovering;
+      });
     }
   }
 
@@ -335,16 +339,19 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin {
     Size size;
     switch (widget.materialTapTargetSize ?? themeData.materialTapTargetSize) {
       case MaterialTapTargetSize.padded:
-        size = const Size(2 * kRadialReactionRadius + 8.0, 2 * kRadialReactionRadius + 8.0);
+        size = const Size(
+            2 * kRadialReactionRadius + 8.0, 2 * kRadialReactionRadius + 8.0);
         break;
       case MaterialTapTargetSize.shrinkWrap:
         size = const Size(2 * kRadialReactionRadius, 2 * kRadialReactionRadius);
         break;
     }
-    size += (widget.visualDensity ?? themeData.visualDensity).baseSizeAdjustment;
+    size +=
+        (widget.visualDensity ?? themeData.visualDensity).baseSizeAdjustment;
     final BoxConstraints additionalConstraints = BoxConstraints.tight(size);
     final bool selected = widget.value == widget.groupValue;
-    final MouseCursor effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
+    final MouseCursor effectiveMouseCursor =
+        MaterialStateProperty.resolveAs<MouseCursor>(
       widget.mouseCursor ?? MaterialStateMouseCursor.clickable,
       <MaterialState>{
         if (!enabled) MaterialState.disabled,
@@ -397,12 +404,12 @@ class _RadioRenderObjectWidget extends LeafRenderObjectWidget {
     @required this.vsync,
     @required this.hasFocus,
     @required this.hovering,
-  }) : assert(selected != null),
-       assert(activeColor != null),
-       assert(inactiveColor != null),
-       assert(vsync != null),
-       assert(toggleable != null),
-       super(key: key);
+  })  : assert(selected != null),
+        assert(activeColor != null),
+        assert(inactiveColor != null),
+        assert(vsync != null),
+        assert(toggleable != null),
+        super(key: key);
 
   final bool selected;
   final bool hasFocus;
@@ -418,18 +425,18 @@ class _RadioRenderObjectWidget extends LeafRenderObjectWidget {
 
   @override
   _RenderRadio createRenderObject(BuildContext context) => _RenderRadio(
-    value: selected,
-    activeColor: activeColor,
-    inactiveColor: inactiveColor,
-    focusColor: focusColor,
-    hoverColor: hoverColor,
-    onChanged: onChanged,
-    tristate: toggleable,
-    vsync: vsync,
-    additionalConstraints: additionalConstraints,
-    hasFocus: hasFocus,
-    hovering: hovering,
-  );
+        value: selected,
+        activeColor: activeColor,
+        inactiveColor: inactiveColor,
+        focusColor: focusColor,
+        hoverColor: hoverColor,
+        onChanged: onChanged,
+        tristate: toggleable,
+        vsync: vsync,
+        additionalConstraints: additionalConstraints,
+        hasFocus: hasFocus,
+        hovering: hovering,
+      );
 
   @override
   void updateRenderObject(BuildContext context, _RenderRadio renderObject) {
@@ -462,21 +469,22 @@ class _RenderRadio extends RenderToggleable {
     bool hasFocus,
     bool hovering,
   }) : super(
-         value: value,
-         activeColor: activeColor,
-         inactiveColor: inactiveColor,
-         focusColor: focusColor,
-         hoverColor: hoverColor,
-         onChanged: onChanged,
-         tristate: tristate,
-         additionalConstraints: additionalConstraints,
-         vsync: vsync,
-         hasFocus: hasFocus,
-         hovering: hovering,
-       );
+          value: value,
+          activeColor: activeColor,
+          inactiveColor: inactiveColor,
+          focusColor: focusColor,
+          hoverColor: hoverColor,
+          onChanged: onChanged,
+          tristate: tristate,
+          additionalConstraints: additionalConstraints,
+          vsync: vsync,
+          hasFocus: hasFocus,
+          hovering: hovering,
+        );
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final Canvas canvas = context.canvas;
 
     paintRadialReaction(canvas, offset, size.center(Offset.zero));

@@ -125,6 +125,7 @@ mixin RenderProxyBoxMixin<T extends RenderBox>
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) context.paintChild(child!, offset);
   }
 }
@@ -817,6 +818,7 @@ class RenderOpacity extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       if (_alpha == 0) {
         // No need to keep the layer. We'll create a new one if necessary.
@@ -929,6 +931,7 @@ mixin RenderAnimatedOpacityMixin<T extends RenderObject>
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       if (_alpha == 0) {
         // No need to keep the layer. We'll create a new one if necessary.
@@ -1045,6 +1048,7 @@ class RenderShaderMask extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       assert(needsCompositing);
       layer ??= ShaderMaskLayer();
@@ -1094,6 +1098,7 @@ class RenderBackdropFilter extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       assert(needsCompositing);
       layer ??= BackdropFilterLayer();
@@ -1375,6 +1380,7 @@ class RenderClipRect extends _RenderCustomClip<Rect> {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       _updateClip();
       layer = context.pushClipRect(
@@ -1466,6 +1472,7 @@ class RenderClipRRect extends _RenderCustomClip<RRect> {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       _updateClip();
       layer = context.pushClipRRect(
@@ -1549,6 +1556,7 @@ class RenderClipOval extends _RenderCustomClip<Rect> {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       _updateClip();
       layer = context.pushClipPath(
@@ -1626,6 +1634,7 @@ class RenderClipPath extends _RenderCustomClip<Path> {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       _updateClip();
       layer = context.pushClipPath(
@@ -1826,6 +1835,7 @@ class RenderPhysicalModel extends _RenderPhysicalModelBase<RRect> {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       _updateClip();
       final RRect offsetRRect = _clip!.shift(offset);
@@ -1927,6 +1937,7 @@ class RenderPhysicalShape extends _RenderPhysicalModelBase<Path> {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       _updateClip();
       final Rect offsetBounds = offset & size;
@@ -2066,6 +2077,7 @@ class RenderDecoratedBox extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     assert(size.width != null);
     assert(size.height != null);
     _painter ??= _decoration.createBoxPainter(markNeedsPaint);
@@ -2282,6 +2294,7 @@ class RenderTransform extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) {
       final Matrix4 transform = _effectiveTransform!;
       final Offset? childOffset = MatrixUtils.getAsTranslation(transform);
@@ -2494,6 +2507,7 @@ class RenderFittedBox extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (size.isEmpty || child!.size.isEmpty) return;
     _updatePaintData();
     if (child != null) {
@@ -2609,6 +2623,7 @@ class RenderFractionalTranslation extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     assert(!debugNeedsLayout);
     if (child != null) {
       super.paint(
@@ -3238,6 +3253,7 @@ class RenderOffstage extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (offstage) return;
     super.paint(context, offset);
   }
@@ -3636,6 +3652,7 @@ class RenderLeaderLayer extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (layer == null) {
       layer = LeaderLayer(link: link, offset: offset);
     } else {
@@ -3772,6 +3789,7 @@ class RenderFollowerLayer extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     assert(showWhenUnlinked != null);
     if (layer == null) {
       layer = FollowerLayer(
@@ -3865,6 +3883,7 @@ class RenderAnnotatedRegion<T extends Object> extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     // Annotated region layers are not retained because they do not create engine layers.
     final AnnotatedRegionLayer<T> layer = AnnotatedRegionLayer<T>(
       value,

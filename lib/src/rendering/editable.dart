@@ -2049,6 +2049,7 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     _layoutText(minWidth: constraints.minWidth, maxWidth: constraints.maxWidth);
     if (_hasVisualOverflow && clipBehavior != Clip.none)
       context.pushClipRect(

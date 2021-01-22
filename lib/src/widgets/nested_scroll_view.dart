@@ -1872,6 +1872,7 @@ class RenderSliverOverlapAbsorber extends RenderSliver
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (child != null) context.paintChild(child, offset);
   }
 

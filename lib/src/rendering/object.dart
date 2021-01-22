@@ -2386,7 +2386,9 @@ abstract class RenderObject extends AbstractNode
   /// given context), the current canvas held by the context might change
   /// because draw operations before and after painting children might need to
   /// be recorded on separate compositing layers.
-  void paint(PaintingContext context, Offset offset) {}
+  void paint(PaintingContext context, Offset offset) {
+    return;
+  }
 
   /// Applies the transform that would be applied when painting the given child
   /// to the given matrix.

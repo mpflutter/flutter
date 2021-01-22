@@ -742,6 +742,7 @@ class _RenderCupertinoAlert extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final MultiChildLayoutParentData contentParentData =
         contentSection.parentData as MultiChildLayoutParentData;
     contentSection.paint(context, offset + contentParentData.offset);
@@ -1301,6 +1302,7 @@ class _RenderCupertinoAlertActions extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final Canvas canvas = context.canvas;
     _drawButtonBackgroundsAndDividersStacked(canvas, offset);
     _drawButtons(context, offset);

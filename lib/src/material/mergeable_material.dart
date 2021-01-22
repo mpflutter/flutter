@@ -705,6 +705,7 @@ class _RenderMergeableMaterialListBody extends RenderListBody {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     RenderBox child = firstChild;
     int i = 0;
 

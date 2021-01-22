@@ -63,6 +63,7 @@ class _ImageFilterRenderObject extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     assert(imageFilter != null);
     if (layer == null) {
       layer = ImageFilterLayer(imageFilter: imageFilter);

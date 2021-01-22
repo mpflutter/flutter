@@ -631,6 +631,7 @@ class RenderStack extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     if (clipBehavior != Clip.none && _hasVisualOverflow) {
       context.pushClipRect(
           needsCompositing, offset, Offset.zero & size, paintStack,

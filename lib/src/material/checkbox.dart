@@ -72,10 +72,10 @@ class Checkbox extends StatefulWidget {
     this.visualDensity,
     this.focusNode,
     this.autofocus = false,
-  }) : assert(tristate != null),
-       assert(tristate || value != null),
-       assert(autofocus != null),
-       super(key: key);
+  })  : assert(tristate != null),
+        assert(tristate || value != null),
+        assert(autofocus != null),
+        super(key: key);
 
   /// Whether this checkbox is checked.
   ///
@@ -221,14 +221,18 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin {
   bool _focused = false;
   void _handleFocusHighlightChanged(bool focused) {
     if (focused != _focused) {
-      setState(() { _focused = focused; });
+      setState(() {
+        _focused = focused;
+      });
     }
   }
 
   bool _hovering = false;
   void _handleHoverChanged(bool hovering) {
     if (hovering != _hovering) {
-      setState(() { _hovering = hovering; });
+      setState(() {
+        _hovering = hovering;
+      });
     }
   }
 
@@ -239,15 +243,18 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin {
     Size size;
     switch (widget.materialTapTargetSize ?? themeData.materialTapTargetSize) {
       case MaterialTapTargetSize.padded:
-        size = const Size(2 * kRadialReactionRadius + 8.0, 2 * kRadialReactionRadius + 8.0);
+        size = const Size(
+            2 * kRadialReactionRadius + 8.0, 2 * kRadialReactionRadius + 8.0);
         break;
       case MaterialTapTargetSize.shrinkWrap:
         size = const Size(2 * kRadialReactionRadius, 2 * kRadialReactionRadius);
         break;
     }
-    size += (widget.visualDensity ?? themeData.visualDensity).baseSizeAdjustment;
+    size +=
+        (widget.visualDensity ?? themeData.visualDensity).baseSizeAdjustment;
     final BoxConstraints additionalConstraints = BoxConstraints.tight(size);
-    final MouseCursor effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
+    final MouseCursor effectiveMouseCursor =
+        MaterialStateProperty.resolveAs<MouseCursor>(
       widget.mouseCursor ?? MaterialStateMouseCursor.clickable,
       <MaterialState>{
         if (!enabled) MaterialState.disabled,
@@ -272,7 +279,9 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin {
             tristate: widget.tristate,
             activeColor: widget.activeColor ?? themeData.toggleableActiveColor,
             checkColor: widget.checkColor ?? const Color(0xFFFFFFFF),
-            inactiveColor: enabled ? themeData.unselectedWidgetColor : themeData.disabledColor,
+            inactiveColor: enabled
+                ? themeData.unselectedWidgetColor
+                : themeData.disabledColor,
             focusColor: widget.focusColor ?? themeData.focusColor,
             hoverColor: widget.hoverColor ?? themeData.hoverColor,
             onChanged: widget.onChanged,
@@ -302,12 +311,12 @@ class _CheckboxRenderObjectWidget extends LeafRenderObjectWidget {
     @required this.additionalConstraints,
     @required this.hasFocus,
     @required this.hovering,
-  }) : assert(tristate != null),
-       assert(tristate || value != null),
-       assert(activeColor != null),
-       assert(inactiveColor != null),
-       assert(vsync != null),
-       super(key: key);
+  })  : assert(tristate != null),
+        assert(tristate || value != null),
+        assert(activeColor != null),
+        assert(inactiveColor != null),
+        assert(vsync != null),
+        super(key: key);
 
   final bool value;
   final bool tristate;
@@ -324,19 +333,19 @@ class _CheckboxRenderObjectWidget extends LeafRenderObjectWidget {
 
   @override
   _RenderCheckbox createRenderObject(BuildContext context) => _RenderCheckbox(
-    value: value,
-    tristate: tristate,
-    activeColor: activeColor,
-    checkColor: checkColor,
-    inactiveColor: inactiveColor,
-    focusColor: focusColor,
-    hoverColor: hoverColor,
-    onChanged: onChanged,
-    vsync: vsync,
-    additionalConstraints: additionalConstraints,
-    hasFocus: hasFocus,
-    hovering: hovering,
-  );
+        value: value,
+        tristate: tristate,
+        activeColor: activeColor,
+        checkColor: checkColor,
+        inactiveColor: inactiveColor,
+        focusColor: focusColor,
+        hoverColor: hoverColor,
+        onChanged: onChanged,
+        vsync: vsync,
+        additionalConstraints: additionalConstraints,
+        hasFocus: hasFocus,
+        hovering: hovering,
+      );
 
   @override
   void updateRenderObject(BuildContext context, _RenderCheckbox renderObject) {
@@ -376,28 +385,27 @@ class _RenderCheckbox extends RenderToggleable {
     bool hasFocus,
     bool hovering,
     @required TickerProvider vsync,
-  }) : _oldValue = value,
-       super(
-         value: value,
-         tristate: tristate,
-         activeColor: activeColor,
-         inactiveColor: inactiveColor,
-         focusColor: focusColor,
-         hoverColor: hoverColor,
-         onChanged: onChanged,
-         additionalConstraints: additionalConstraints,
-         vsync: vsync,
-         hasFocus: hasFocus,
-         hovering: hovering,
-       );
+  })  : _oldValue = value,
+        super(
+          value: value,
+          tristate: tristate,
+          activeColor: activeColor,
+          inactiveColor: inactiveColor,
+          focusColor: focusColor,
+          hoverColor: hoverColor,
+          onChanged: onChanged,
+          additionalConstraints: additionalConstraints,
+          vsync: vsync,
+          hasFocus: hasFocus,
+          hovering: hovering,
+        );
 
   bool _oldValue;
   Color checkColor;
 
   @override
   set value(bool newValue) {
-    if (newValue == value)
-      return;
+    if (newValue == value) return;
     _oldValue = value;
     super.value = newValue;
   }
@@ -415,7 +423,8 @@ class _RenderCheckbox extends RenderToggleable {
   RRect _outerRectAt(Offset origin, double t) {
     final double inset = 1.0 - (t - 0.5).abs() * 2.0;
     final double size = _kEdgeSize - inset * _kStrokeWidth;
-    final Rect rect = Rect.fromLTWH(origin.dx + inset, origin.dy + inset, size, size);
+    final Rect rect =
+        Rect.fromLTWH(origin.dx + inset, origin.dy + inset, size, size);
     return RRect.fromRectAndRadius(rect, _kEdgeRadius);
   }
 
@@ -424,8 +433,10 @@ class _RenderCheckbox extends RenderToggleable {
   Color _colorAt(double t) {
     // As t goes from 0.0 to 0.25, animate from the inactiveColor to activeColor.
     return onChanged == null
-      ? inactiveColor
-      : (t >= 0.25 ? activeColor : Color.lerp(inactiveColor, activeColor, t * 4.0));
+        ? inactiveColor
+        : (t >= 0.25
+            ? activeColor
+            : Color.lerp(inactiveColor, activeColor, t * 4.0));
   }
 
   // White stroke used to paint the check and dash.
@@ -440,7 +451,8 @@ class _RenderCheckbox extends RenderToggleable {
     assert(t >= 0.0 && t <= 0.5);
     final double size = outer.width;
     // As t goes from 0.0 to 1.0, gradually fill the outer RRect.
-    final RRect inner = outer.deflate(math.min(size / 2.0, _kStrokeWidth + size * t));
+    final RRect inner =
+        outer.deflate(math.min(size / 2.0, _kStrokeWidth + size * t));
     canvas.drawDRRect(outer, inner, paint);
   }
 
@@ -481,15 +493,18 @@ class _RenderCheckbox extends RenderToggleable {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    return;
     final Canvas canvas = context.canvas;
     paintRadialReaction(canvas, offset, size.center(Offset.zero));
 
     final Paint strokePaint = _createStrokePaint();
-    final Offset origin = offset + (size / 2.0 - const Size.square(_kEdgeSize) / 2.0 as Offset);
+    final Offset origin =
+        offset + (size / 2.0 - const Size.square(_kEdgeSize) / 2.0 as Offset);
     final AnimationStatus status = position.status;
-    final double tNormalized = status == AnimationStatus.forward || status == AnimationStatus.completed
-      ? position.value
-      : 1.0 - position.value;
+    final double tNormalized =
+        status == AnimationStatus.forward || status == AnimationStatus.completed
+            ? position.value
+            : 1.0 - position.value;
 
     // Four cases: false to null, false to true, null to false, true to false
     if (_oldValue == false || value == false) {
@@ -508,9 +523,10 @@ class _RenderCheckbox extends RenderToggleable {
         else
           _drawCheck(canvas, origin, tShrink, strokePaint);
       }
-    } else { // Two cases: null to true, true to null
+    } else {
+      // Two cases: null to true, true to null
       final RRect outer = _outerRectAt(origin, 1.0);
-      final Paint paint = Paint() ..color = _colorAt(1.0);
+      final Paint paint = Paint()..color = _colorAt(1.0);
       canvas.drawRRect(outer, paint);
 
       if (tNormalized <= 0.5) {
