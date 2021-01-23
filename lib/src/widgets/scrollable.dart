@@ -506,6 +506,15 @@ class ScrollableState extends State<Scrollable>
 
   @override
   Widget build(BuildContext context) {
+    if (_position == null) {
+      _position = ScrollPositionWithSingleContext(
+          context: this,
+          physics: AlwaysScrollableScrollPhysics(),
+          initialPixels: 0);
+    }
+    if (_configuration == null) {
+      _configuration = ScrollConfiguration.of(context);
+    }
     assert(position != null);
     // _ScrollableScope must be placed above the BuildContext returned by notificationContext
     // so that we can get this ScrollableState by doing the following:
