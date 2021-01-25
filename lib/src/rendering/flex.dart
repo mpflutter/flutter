@@ -821,16 +821,16 @@ class RenderFlex extends RenderBox
                   ? (freeSpace - allocatedFlexSpace)
                   : spacePerFlex * flex)
               : double.infinity;
-          late final double minChildExtent;
-          switch (_getFit(child)) {
-            case FlexFit.tight:
-              assert(maxChildExtent < double.infinity);
-              minChildExtent = maxChildExtent;
-              break;
-            case FlexFit.loose:
-              minChildExtent = 0.0;
-              break;
-          }
+          late final double minChildExtent = 0.0;
+          // switch (_getFit(child)) {
+          //   // case FlexFit.tight:
+          //   //   assert(maxChildExtent < double.infinity);
+          //   //   minChildExtent = maxChildExtent;
+          //   //   break;
+          //   // case FlexFit.loose:
+          //   //   minChildExtent = 0.0;
+          //   //   break;
+          // }
           assert(minChildExtent != null);
           BoxConstraints innerConstraints;
           if (crossAxisAlignment == CrossAxisAlignment.stretch) {
