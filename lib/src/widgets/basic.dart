@@ -5403,6 +5403,18 @@ class RichText extends MultiChildRenderObjectWidget {
   @override
   void updateRenderObject(BuildContext context, RenderParagraph renderObject) {
     assert(textDirection != null || debugCheckHasDirectionality(context));
+    if (renderObject.data != text ||
+        renderObject.textAlign != textAlign ||
+        renderObject.softWrap != softWrap ||
+        renderObject.overflow != overflow ||
+        renderObject.maxLines != maxLines) {
+      renderObject.measuredSize = null;
+    }
+    renderObject.data = text;
+    renderObject.textAlign = textAlign;
+    renderObject.softWrap = softWrap;
+    renderObject.overflow = overflow;
+    renderObject.maxLines = maxLines;
   }
 
   @override

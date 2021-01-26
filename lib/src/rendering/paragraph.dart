@@ -57,6 +57,13 @@ class TextParentData extends ContainerBoxParentData<RenderBox> {
 
 class RenderParagraph extends RenderBox
     with ContainerRenderObjectMixin<RenderBox, TextParentData> {
+  Size? measuredSize;
+  InlineSpan? data;
+  TextAlign? textAlign;
+  bool? softWrap;
+  TextOverflow? overflow;
+  int? maxLines;
+
   @override
   void setupParentData(covariant RenderObject child) {
     if (child.parentData is! TextParentData)
@@ -69,6 +76,6 @@ class RenderParagraph extends RenderBox
   }
 
   Size _sizeForConstraints(BoxConstraints constraints) {
-    return constraints.smallest;
+    return measuredSize ?? constraints.smallest;
   }
 }
