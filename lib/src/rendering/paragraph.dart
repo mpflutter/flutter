@@ -76,6 +76,12 @@ class RenderParagraph extends RenderBox
   }
 
   Size _sizeForConstraints(BoxConstraints constraints) {
-    return measuredSize ?? constraints.smallest;
+    if (measuredSize != null) {
+      return Size(
+        math.min(measuredSize!.width, constraints.biggest.width),
+        math.min(measuredSize!.height, constraints.biggest.height),
+      );
+    }
+    return constraints.smallest;
   }
 }
