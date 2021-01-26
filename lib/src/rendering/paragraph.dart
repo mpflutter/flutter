@@ -78,8 +78,10 @@ class RenderParagraph extends RenderBox
   Size _sizeForConstraints(BoxConstraints constraints) {
     if (measuredSize != null) {
       return Size(
-        math.min(measuredSize!.width, constraints.biggest.width),
-        math.min(measuredSize!.height, constraints.biggest.height),
+        math.max(math.min(measuredSize!.width, constraints.biggest.width),
+            constraints.smallest.width),
+        math.max(math.min(measuredSize!.height, constraints.biggest.height),
+            constraints.smallest.height),
       );
     }
     return constraints.smallest;
