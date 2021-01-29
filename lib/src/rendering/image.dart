@@ -10,12 +10,18 @@ import 'object.dart';
 export 'package:flutter/painting.dart' show BoxFit, ImageRepeat;
 
 class RenderImage extends RenderBox {
+  double? width;
+  double? height;
+
   @override
   void performLayout() {
     size = _sizeForConstraints(constraints);
   }
 
   Size _sizeForConstraints(BoxConstraints constraints) {
+    if (width != null && height != null) {
+      return constraints.constrain(Size(width!, height!));
+    }
     return constraints.smallest;
   }
 }

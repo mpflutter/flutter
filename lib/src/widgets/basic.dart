@@ -5600,11 +5600,17 @@ class RawImage extends LeafRenderObjectWidget {
   RenderImage createRenderObject(BuildContext context) {
     assert((!matchTextDirection && alignment is Alignment) ||
         debugCheckHasDirectionality(context));
-    return RenderImage();
+    final renderObject = RenderImage();
+    renderObject.width = width;
+    renderObject.height = height;
+    return renderObject;
   }
 
   @override
-  void updateRenderObject(BuildContext context, RenderImage renderObject) {}
+  void updateRenderObject(BuildContext context, RenderImage renderObject) {
+    renderObject.width = width;
+    renderObject.height = height;
+  }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

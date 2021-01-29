@@ -1489,9 +1489,6 @@ abstract class RenderObject extends AbstractNode
   /// throw a [StateError] exception.
   @protected
   Constraints get constraints {
-    if (_constraints == null)
-      throw StateError(
-          'A RenderObject does not have any constraints before it has been laid out.');
     return _constraints!;
   }
 

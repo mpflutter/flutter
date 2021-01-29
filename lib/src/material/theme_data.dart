@@ -270,6 +270,7 @@ class ThemeData with Diagnosticable {
     DialogTheme dialogTheme,
     FloatingActionButtonThemeData floatingActionButtonTheme,
     NavigationRailThemeData navigationRailTheme,
+    Typography typography,
     CupertinoThemeData cupertinoOverrideTheme,
     SnackBarThemeData snackBarTheme,
     BottomSheetThemeData bottomSheetTheme,
@@ -350,22 +351,22 @@ class ThemeData with Diagnosticable {
         ? const IconThemeData(color: Colors.white)
         : const IconThemeData(color: Colors.black87);
     platform ??= defaultTargetPlatform;
-    // typography ??= Typography.material2014(platform: platform);
-    // TextTheme defaultTextTheme = isDark ? typography.white : typography.black;
-    // TextTheme defaultPrimaryTextTheme =
-    //     primaryIsDark ? typography.white : typography.black;
-    // TextTheme defaultAccentTextTheme =
-    //     accentIsDark ? typography.white : typography.black;
-    // if (fontFamily != null) {
-    //   defaultTextTheme = defaultTextTheme.apply(fontFamily: fontFamily);
-    //   defaultPrimaryTextTheme =
-    //       defaultPrimaryTextTheme.apply(fontFamily: fontFamily);
-    //   defaultAccentTextTheme =
-    //       defaultAccentTextTheme.apply(fontFamily: fontFamily);
-    // }
-    // textTheme = defaultTextTheme.merge(textTheme);
-    // primaryTextTheme = defaultPrimaryTextTheme.merge(primaryTextTheme);
-    // accentTextTheme = defaultAccentTextTheme.merge(accentTextTheme);
+    typography ??= Typography.material2014(platform: platform);
+    TextTheme defaultTextTheme = isDark ? typography.white : typography.black;
+    TextTheme defaultPrimaryTextTheme =
+        primaryIsDark ? typography.white : typography.black;
+    TextTheme defaultAccentTextTheme =
+        accentIsDark ? typography.white : typography.black;
+    if (fontFamily != null) {
+      defaultTextTheme = defaultTextTheme.apply(fontFamily: fontFamily);
+      defaultPrimaryTextTheme =
+          defaultPrimaryTextTheme.apply(fontFamily: fontFamily);
+      defaultAccentTextTheme =
+          defaultAccentTextTheme.apply(fontFamily: fontFamily);
+    }
+    textTheme = defaultTextTheme.merge(textTheme);
+    primaryTextTheme = defaultPrimaryTextTheme.merge(primaryTextTheme);
+    accentTextTheme = defaultAccentTextTheme.merge(accentTextTheme);
     materialTapTargetSize ??= MaterialTapTargetSize.padded;
     applyElevationOverlayColor ??= false;
 
@@ -483,7 +484,7 @@ class ThemeData with Diagnosticable {
       dialogTheme: dialogTheme,
       floatingActionButtonTheme: floatingActionButtonTheme,
       navigationRailTheme: navigationRailTheme,
-      // typography: typography,
+      typography: typography,
       cupertinoOverrideTheme: cupertinoOverrideTheme,
       snackBarTheme: snackBarTheme,
       bottomSheetTheme: bottomSheetTheme,
@@ -1493,7 +1494,7 @@ class ThemeData with Diagnosticable {
           a.floatingActionButtonTheme, b.floatingActionButtonTheme, t),
       navigationRailTheme: NavigationRailThemeData.lerp(
           a.navigationRailTheme, b.navigationRailTheme, t),
-      // typography: Typography.lerp(a.typography, b.typography, t),
+      typography: Typography.lerp(a.typography, b.typography, t),
       cupertinoOverrideTheme:
           t < 0.5 ? a.cupertinoOverrideTheme : b.cupertinoOverrideTheme,
       snackBarTheme:
@@ -1837,8 +1838,8 @@ class ThemeData with Diagnosticable {
         'navigationRailThemeData', navigationRailTheme,
         defaultValue: defaultData.navigationRailTheme,
         level: DiagnosticLevel.debug));
-    // properties.add(DiagnosticsProperty<Typography>('typography', typography,
-    //     defaultValue: defaultData.typography, level: DiagnosticLevel.debug));
+    properties.add(DiagnosticsProperty<Typography>('typography', typography,
+        defaultValue: defaultData.typography, level: DiagnosticLevel.debug));
     properties.add(DiagnosticsProperty<CupertinoThemeData>(
         'cupertinoOverrideTheme', cupertinoOverrideTheme,
         defaultValue: defaultData.cupertinoOverrideTheme,
