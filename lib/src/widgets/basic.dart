@@ -5410,6 +5410,11 @@ class RichText extends MultiChildRenderObjectWidget {
         renderObject.maxLines != maxLines) {
       renderObject.measuredSize = null;
     }
+    if (renderObject.data != null &&
+        text != null &&
+        renderObject.data.compareTo(text) != RenderComparison.identical) {
+      renderObject.measuredSize = null;
+    }
     renderObject.data = text;
     renderObject.textAlign = textAlign;
     renderObject.softWrap = softWrap;
