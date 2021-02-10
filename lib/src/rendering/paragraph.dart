@@ -64,6 +64,9 @@ class RenderParagraph extends RenderBox
   TextOverflow? overflow;
   int? maxLines;
 
+  RenderParagraph(
+      {this.data, this.textAlign, this.softWrap, this.overflow, this.maxLines});
+
   @override
   void setupParentData(covariant RenderObject child) {
     if (child.parentData is! TextParentData)

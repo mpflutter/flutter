@@ -5397,14 +5397,18 @@ class RichText extends MultiChildRenderObjectWidget {
   @override
   RenderParagraph createRenderObject(BuildContext context) {
     assert(textDirection != null || debugCheckHasDirectionality(context));
-    return RenderParagraph();
+    return RenderParagraph(
+        data: text,
+        textAlign: textAlign,
+        softWrap: softWrap,
+        overflow: overflow,
+        maxLines: maxLines);
   }
 
   @override
   void updateRenderObject(BuildContext context, RenderParagraph renderObject) {
     assert(textDirection != null || debugCheckHasDirectionality(context));
-    if (renderObject.data != text ||
-        renderObject.textAlign != textAlign ||
+    if (renderObject.textAlign != textAlign ||
         renderObject.softWrap != softWrap ||
         renderObject.overflow != overflow ||
         renderObject.maxLines != maxLines) {
@@ -5412,7 +5416,7 @@ class RichText extends MultiChildRenderObjectWidget {
     }
     if (renderObject.data != null &&
         text != null &&
-        renderObject.data.compareTo(text) != RenderComparison.identical) {
+        renderObject.data.compareTo(text) == RenderComparison.layout) {
       renderObject.measuredSize = null;
     }
     renderObject.data = text;
