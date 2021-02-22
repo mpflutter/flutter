@@ -398,6 +398,7 @@ class EditableText extends StatefulWidget {
   /// [readOnly] arguments must not be null.
   EditableText({
     Key key,
+    this.placeholder,
     @required this.controller,
     @required this.focusNode,
     this.readOnly = false,
@@ -409,8 +410,8 @@ class EditableText extends StatefulWidget {
     this.enableSuggestions = true,
     @required this.style,
     StrutStyle strutStyle,
-    @required this.cursorColor,
-    @required this.backgroundCursorColor,
+    this.cursorColor = const Color(0),
+    this.backgroundCursorColor = const Color(0),
     this.textAlign = TextAlign.start,
     this.textDirection,
     this.locale,
@@ -520,6 +521,9 @@ class EditableText extends StatefulWidget {
             : inputFormatters,
         showCursor = showCursor ?? !readOnly,
         super(key: key);
+
+  /// Controls the text being edited.
+  final String placeholder;
 
   /// Controls the text being edited.
   final TextEditingController controller;
