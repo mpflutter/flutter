@@ -1406,7 +1406,9 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       routing = Navigator(
         key: _navigator,
         initialRoute: _initialRouteName,
-        onGenerateRoute: _onGenerateRoute,
+        onGenerateRoute: (settings) {
+          return _onGenerateRoute(settings);
+        },
         onGenerateInitialRoutes: widget.onGenerateInitialRoutes == null
             ? Navigator.defaultGenerateInitialRoutes
             : (NavigatorState navigator, String initialRouteName) {

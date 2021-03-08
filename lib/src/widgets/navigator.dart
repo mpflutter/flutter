@@ -3452,7 +3452,12 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin {
     String routeName, {
     Object arguments,
   }) {
-    return push<T>(_routeNamed<T>(routeName, arguments: arguments));
+    final route = _routeNamed<T>(routeName, arguments: arguments);
+    if (route.settings.arguments is Map &&
+        (route.settings.arguments as Map)['\$mpcore.package.prevent'] == true) {
+      return null;
+    }
+    return push<T>(route);
   }
 
   /// Replace the current route of the navigator by pushing the route named
@@ -3867,6 +3872,9 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin {
   /// {@end-tool}
   @optionalTypeArgs
   void pop<T extends Object>([T result]) {
+    if (!canPop()) {
+      return;
+    }
     assert(!_debugLocked);
     assert(() {
       _debugLocked = true;
