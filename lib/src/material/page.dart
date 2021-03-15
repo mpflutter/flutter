@@ -32,7 +32,8 @@ import 'theme.dart';
 ///  * [MaterialRouteTransitionMixin], which provides the material transition
 ///    for this route.
 ///  * [MaterialPage], which is a [Page] of this class.
-class MaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T> {
+class MaterialPageRoute<T> extends PageRoute<T>
+    with MaterialRouteTransitionMixin<T> {
   /// Construct a MaterialPageRoute whose contents are defined by [builder].
   ///
   /// The values of [builder], [maintainState], and [PageRoute.fullscreenDialog]
@@ -42,11 +43,11 @@ class MaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixi
     RouteSettings settings,
     this.maintainState = true,
     bool fullscreenDialog = false,
-  }) : assert(builder != null),
-       assert(maintainState != null),
-       assert(fullscreenDialog != null),
-       assert(opaque),
-       super(settings: settings, fullscreenDialog: fullscreenDialog);
+  })  : assert(builder != null),
+        assert(maintainState != null),
+        assert(fullscreenDialog != null),
+        //  assert(opaque),
+        super(settings: settings, fullscreenDialog: fullscreenDialog);
 
   /// Builds the primary contents of the route.
   final WidgetBuilder builder;
@@ -60,7 +61,6 @@ class MaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixi
   @override
   String get debugLabel => '${super.debugLabel}(${settings.name})';
 }
-
 
 /// A mixin that provides platform-adaptive transitions for a [PageRoute].
 ///
@@ -95,8 +95,10 @@ mixin MaterialRouteTransitionMixin<T> on PageRoute<T> {
   @override
   bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
     // Don't perform outgoing animation if the next route is a fullscreen dialog.
-    return (nextRoute is MaterialRouteTransitionMixin && !nextRoute.fullscreenDialog)
-      || (nextRoute is CupertinoRouteTransitionMixin && !nextRoute.fullscreenDialog);
+    return (nextRoute is MaterialRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog) ||
+        (nextRoute is CupertinoRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog);
   }
 
   @override
@@ -109,9 +111,8 @@ mixin MaterialRouteTransitionMixin<T> on PageRoute<T> {
     assert(() {
       if (result == null) {
         throw FlutterError(
-          'The builder for route "${settings.name}" returned null.\n'
-          'Route builders must never return null.'
-        );
+            'The builder for route "${settings.name}" returned null.\n'
+            'Route builders must never return null.');
       }
       return true;
     }());
@@ -123,9 +124,11 @@ mixin MaterialRouteTransitionMixin<T> on PageRoute<T> {
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
     final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
-    return theme.buildTransitions<T>(this, context, animation, secondaryAnimation, child);
+    return theme.buildTransitions<T>(
+        this, context, animation, secondaryAnimation, child);
   }
 }
 
@@ -158,10 +161,10 @@ class MaterialPage<T> extends Page<T> {
     LocalKey key,
     String name,
     Object arguments,
-  }) : assert(child != null),
-       assert(maintainState != null),
-       assert(fullscreenDialog != null),
-       super(key: key, name: name, arguments: arguments);
+  })  : assert(child != null),
+        assert(maintainState != null),
+        assert(fullscreenDialog != null),
+        super(key: key, name: name, arguments: arguments);
 
   /// The content to be shown in the [Route] created by this page.
   final Widget child;
@@ -182,12 +185,13 @@ class MaterialPage<T> extends Page<T> {
 //
 // This route uses the builder from the page to build its content. This ensures
 // the content is up to date after page updates.
-class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T> {
+class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
+    with MaterialRouteTransitionMixin<T> {
   _PageBasedMaterialPageRoute({
     @required MaterialPage<T> page,
-  }) : assert(page != null),
-       assert(opaque),
-       super(settings: page);
+  })  : assert(page != null),
+        // assert(opaque),
+        super(settings: page);
 
   MaterialPage<T> get _page => settings as MaterialPage<T>;
 
