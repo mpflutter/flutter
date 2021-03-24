@@ -2502,6 +2502,8 @@ abstract class BuildContext {
 /// [RootRenderObjectElement.assignOwner] method on the root element of the
 /// widget tree.
 class BuildOwner {
+  static final List<Element> recentDirtyElements = <Element>[];
+
   /// Creates an object that manages widgets.
   BuildOwner({this.onBuildScheduled});
 
@@ -2787,6 +2789,8 @@ class BuildOwner {
         assert(element._inDirtyList);
         element._inDirtyList = false;
       }
+      BuildOwner.recentDirtyElements.clear();
+      BuildOwner.recentDirtyElements.addAll(_dirtyElements);
       _dirtyElements.clear();
       _scheduledFlushDirtyElements = false;
       _dirtyElementsNeedsResorting = null;
