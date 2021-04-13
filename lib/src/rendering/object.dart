@@ -15,6 +15,7 @@ import 'package:vector_math/vector_math_64.dart';
 import 'binding.dart';
 import 'debug.dart';
 import 'layer.dart';
+import 'box.dart';
 
 export 'package:flutter/foundation.dart'
     show
@@ -1489,7 +1490,12 @@ abstract class RenderObject extends AbstractNode
   /// throw a [StateError] exception.
   @protected
   Constraints get constraints {
-    return _constraints!;
+    return _constraints ??
+        BoxConstraints(
+            minWidth: 0,
+            minHeight: 0,
+            maxWidth: double.infinity,
+            maxHeight: double.infinity);
   }
 
   Constraints? _constraints;
