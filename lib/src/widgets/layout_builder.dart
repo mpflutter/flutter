@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart = 2.8
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
@@ -21,7 +19,7 @@ typedef LayoutWidgetBuilder = Widget Function(
 /// adhere to. This is useful when the parent constrains the child's size and layout,
 /// and doesn't depend on the child's intrinsic size.
 ///
-/// {@template flutter.widgets.layoutBuilder.builderFunctionInvocation}
+/// {@template flutter.widgets.ConstrainedLayoutBuilder}
 /// The [builder] function is called in the following situations:
 ///
 /// * The first time the widget is laid out.
@@ -42,9 +40,9 @@ abstract class ConstrainedLayoutBuilder<ConstraintType extends Constraints>
   /// The [builder] argument must not be null, and the returned widget should not
   /// be null.
   const ConstrainedLayoutBuilder({
-    Key key,
-    @required this.builder,
-  })  : assert(builder != null),
+    Key? key,
+    required this.builder,
+  })   : assert(builder != null),
         super(key: key);
 
   @override
@@ -73,11 +71,11 @@ class _LayoutBuilderElement<ConstraintType extends Constraints>
       get renderObject => super.renderObject
           as RenderConstrainedLayoutBuilder<ConstraintType, RenderObject>;
 
-  Element _child;
+  Element? _child;
 
   @override
   void visitChildren(ElementVisitor visitor) {
-    if (_child != null) visitor(_child);
+    if (_child != null) visitor(_child!);
   }
 
   @override
@@ -88,7 +86,7 @@ class _LayoutBuilderElement<ConstraintType extends Constraints>
   }
 
   @override
-  void mount(Element parent, dynamic newSlot) {
+  void mount(Element? parent, dynamic newSlot) {
     super.mount(parent, newSlot); // Creates the renderObject.
     renderObject.updateCallback(_layout);
   }
@@ -125,24 +123,22 @@ class _LayoutBuilderElement<ConstraintType extends Constraints>
   }
 
   void _layout(ConstraintType constraints) {
-    owner.buildScope(this, () {
+    owner!.buildScope(this, () {
       Widget built;
-      if (widget.builder != null) {
-        try {
-          built = widget.builder(this, constraints);
-          debugWidgetBuilderValue(widget, built);
-        } catch (e, stack) {
-          built = ErrorWidget.builder(
-            _debugReportException(
-              ErrorDescription('building $widget'),
-              e,
-              stack,
-              informationCollector: () sync* {
-                yield DiagnosticsDebugCreator(DebugCreator(this));
-              },
-            ),
-          );
-        }
+      try {
+        built = widget.builder(this, constraints);
+        debugWidgetBuilderValue(widget, built);
+      } catch (e, stack) {
+        built = ErrorWidget.builder(
+          _debugReportException(
+            ErrorDescription('building $widget'),
+            e,
+            stack,
+            informationCollector: () sync* {
+              yield DiagnosticsDebugCreator(DebugCreator(this));
+            },
+          ),
+        );
       }
       try {
         _child = updateChild(_child, built, null);
@@ -195,10 +191,10 @@ class _LayoutBuilderElement<ConstraintType extends Constraints>
 /// [RenderObject.performLayout].
 mixin RenderConstrainedLayoutBuilder<ConstraintType extends Constraints,
     ChildType extends RenderObject> on RenderObjectWithChildMixin<ChildType> {
-  LayoutCallback<ConstraintType> _callback;
+  LayoutCallback<ConstraintType>? _callback;
 
   /// Change the layout callback.
-  void updateCallback(LayoutCallback<ConstraintType> value) {
+  void updateCallback(LayoutCallback<ConstraintType>? value) {
     if (value == _callback) return;
     _callback = value;
     markNeedsLayout();
@@ -227,7 +223,7 @@ mixin RenderConstrainedLayoutBuilder<ConstraintType extends Constraints,
   // The constraints that were passed to this class last time it was laid out.
   // These constraints are compared to the new constraints to determine whether
   // [ConstrainedLayoutBuilder.builder] needs to be called.
-  Constraints _previousConstraints;
+  Constraints? _previousConstraints;
 
   /// Invoke the callback supplied via [updateCallback].
   ///
@@ -238,7 +234,7 @@ mixin RenderConstrainedLayoutBuilder<ConstraintType extends Constraints,
     if (_needsBuild || constraints != _previousConstraints) {
       _previousConstraints = constraints;
       _needsBuild = false;
-      invokeLayoutCallback(_callback);
+      invokeLayoutCallback(_callback!);
     }
   }
 }
@@ -251,7 +247,7 @@ mixin RenderConstrainedLayoutBuilder<ConstraintType extends Constraints,
 /// the child's intrinsic size. The [LayoutBuilder]'s final size will match its
 /// child's size.
 ///
-/// {@macro flutter.widgets.layoutBuilder.builderFunctionInvocation}
+/// {@macro flutter.widgets.ConstrainedLayoutBuilder}
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=IYDVcriKjsw}
 ///
@@ -324,9 +320,9 @@ class LayoutBuilder extends ConstrainedLayoutBuilder<BoxConstraints> {
   ///
   /// The [builder] argument must not be null.
   const LayoutBuilder({
-    Key key,
-    @required LayoutWidgetBuilder builder,
-  })  : assert(builder != null),
+    Key? key,
+    required LayoutWidgetBuilder builder,
+  })   : assert(builder != null),
         super(key: key, builder: builder);
 
   @override
@@ -366,26 +362,36 @@ class _RenderLayoutBuilder extends RenderBox
   }
 
   @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    return Size.zero;
+  }
+
+  @override
   void performLayout() {
     final BoxConstraints constraints = this.constraints;
     rebuildIfNecessary();
     if (child != null) {
-      child.layout(constraints, parentUsesSize: true);
-      size = constraints.constrain(child.size);
+      child!.layout(constraints, parentUsesSize: true);
+      size = constraints.constrain(child!.size);
     } else {
       size = constraints.biggest;
     }
   }
 
   @override
-  bool hitTestChildren(BoxHitTestResult result, {Offset position}) {
+  double? computeDistanceToActualBaseline(TextBaseline baseline) {
+    if (child != null) return child!.getDistanceToActualBaseline(baseline);
+    return super.computeDistanceToActualBaseline(baseline);
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     return child?.hitTest(result, position: position) ?? false;
   }
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    return;
-    if (child != null) context.paintChild(child, offset);
+    if (child != null) context.paintChild(child!, offset);
   }
 
   bool _debugThrowIfNotCheckingIntrinsics() {
@@ -405,9 +411,9 @@ class _RenderLayoutBuilder extends RenderBox
 
 FlutterErrorDetails _debugReportException(
   DiagnosticsNode context,
-  dynamic exception,
+  Object exception,
   StackTrace stack, {
-  InformationCollector informationCollector,
+  InformationCollector? informationCollector,
 }) {
   final FlutterErrorDetails details = FlutterErrorDetails(
     exception: exception,

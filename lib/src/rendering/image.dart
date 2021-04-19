@@ -13,6 +13,8 @@ class RenderImage extends RenderBox {
   double? width;
   double? height;
 
+  RenderImage({this.width, this.height});
+
   @override
   void performLayout() {
     size = _sizeForConstraints(constraints);
