@@ -5667,31 +5667,6 @@ class RichText extends MultiChildRenderObjectWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(EnumProperty<TextAlign>('textAlign', textAlign,
-        defaultValue: TextAlign.start));
-    properties.add(EnumProperty<TextDirection>('textDirection', textDirection,
-        defaultValue: null));
-    properties.add(FlagProperty('softWrap',
-        value: softWrap,
-        ifTrue: 'wrapping at box width',
-        ifFalse: 'no wrapping except at line break characters',
-        showName: true));
-    properties.add(EnumProperty<TextOverflow>('overflow', overflow,
-        defaultValue: TextOverflow.clip));
-    properties.add(
-        DoubleProperty('textScaleFactor', textScaleFactor, defaultValue: 1.0));
-    properties.add(IntProperty('maxLines', maxLines, ifNull: 'unlimited'));
-    properties.add(EnumProperty<TextWidthBasis>(
-        'textWidthBasis', textWidthBasis,
-        defaultValue: TextWidthBasis.parent));
-    properties.add(StringProperty('text', text.toPlainText()));
-    properties
-        .add(DiagnosticsProperty<Locale>('locale', locale, defaultValue: null));
-    properties.add(DiagnosticsProperty<StrutStyle>('strutStyle', strutStyle,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<TextHeightBehavior>(
-        'textHeightBehavior', textHeightBehavior,
-        defaultValue: null));
   }
 }
 
