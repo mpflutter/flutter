@@ -47,14 +47,18 @@ class MockWindow extends Window {
   }
 
   double get devicePixelRatio => DeviceInfo.devicePixelRatio;
-  Size get physicalSize =>
-      Size(DeviceInfo.physicalSizeWidth, DeviceInfo.physicalSizeHeight);
+
+  Size get physicalSize => Size(
+        DeviceInfo.physicalSizeWidth,
+        DeviceInfo.physicalSizeHeight,
+      );
+
   WindowPadding get viewInsets => WindowPadding.zero;
 
   WindowPadding get viewPadding => WindowPadding.zero;
 
   WindowPadding get systemGestureInsets => WindowPadding.zero;
-  WindowPadding get padding => WindowPadding.zero;
+  WindowPadding get padding => DeviceInfo.windowPadding;
   double get textScaleFactor => _textScaleFactor;
   double _textScaleFactor = 1.0;
   bool get alwaysUse24HourFormat => _alwaysUse24HourFormat;

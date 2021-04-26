@@ -1,6 +1,8 @@
 import 'dart:js' as js;
 import 'dart:html' as html;
 
+import 'package:flutter/ui/ui.dart';
+
 class DeviceInfo {
   static double physicalSizeWidth = (() {
     try {
@@ -15,6 +17,7 @@ class DeviceInfo {
       }
     }
   })();
+
   static double physicalSizeHeight = (() {
     try {
       return js.context['document']['body']['clientHeight'] /
@@ -28,6 +31,7 @@ class DeviceInfo {
       }
     }
   })();
+
   static double devicePixelRatio = (() {
     try {
       return js.context['devicePixelRatio'];
@@ -37,6 +41,24 @@ class DeviceInfo {
       } catch (e) {
         return 1.0;
       }
+    }
+  })();
+
+  static WindowPadding windowPadding = (() {
+    try {
+      final safeAreaBottomHeight =
+          js.context['document']['body']['windowPaddingBottom'];
+      if (!(safeAreaBottomHeight is num) || safeAreaBottomHeight.isNaN) {
+        return WindowPadding.zero;
+      }
+      return MockWindowPadding(
+        left: 0.0,
+        top: 0.0,
+        right: 0.0,
+        bottom: safeAreaBottomHeight.toDouble(),
+      );
+    } catch (e) {
+      return WindowPadding.zero;
     }
   })();
 

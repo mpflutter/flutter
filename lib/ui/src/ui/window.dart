@@ -35,6 +35,7 @@ abstract class WindowPadding {
   double get top;
   double get right;
   double get bottom;
+
   static const WindowPadding zero =
       WindowPadding._(left: 0.0, top: 0.0, right: 0.0, bottom: 0.0);
 
@@ -201,9 +202,7 @@ abstract class Window {
   double get devicePixelRatio;
   Size get physicalSize;
   WindowPadding get viewInsets => WindowPadding.zero;
-
   WindowPadding get viewPadding => WindowPadding.zero;
-
   WindowPadding get systemGestureInsets => WindowPadding.zero;
   WindowPadding get padding => WindowPadding.zero;
   double get textScaleFactor => _textScaleFactor;
