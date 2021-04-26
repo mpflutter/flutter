@@ -3216,6 +3216,11 @@ abstract class Element extends DiagnosticableTree implements BuildContext {
   // orderly fashion.
   _ElementLifecycle _lifecycleState = _ElementLifecycle.initial;
 
+  bool isInactive() {
+    return _lifecycleState == _ElementLifecycle.inactive ||
+        _lifecycleState == _ElementLifecycle.defunct;
+  }
+
   /// Calls the argument for each child. Must be overridden by subclasses that
   /// support having children.
   ///
