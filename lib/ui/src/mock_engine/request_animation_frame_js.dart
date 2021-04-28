@@ -1,4 +1,4 @@
-import 'dart:html' as html;
+import 'dart:js' as js;
 
 const bool isTaro =
     bool.fromEnvironment('mpcore.env.taro', defaultValue: false);
@@ -10,5 +10,5 @@ void requestAnimationFrame(Function(num) callback) {
     });
     return;
   }
-  html.window.requestAnimationFrame(callback);
+  js.context.callMethod('requestAnimationFrame', [callback]);
 }

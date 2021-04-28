@@ -1,17 +1,16 @@
 import 'dart:js' as js;
-import 'dart:html' as html;
 
 import 'package:flutter/ui/ui.dart';
 
 class DeviceInfo {
   static double physicalSizeWidth = (() {
     try {
-      return js.context['document']['body']['clientWidth'] /
+      return js.context['document'].body.clientWidth *
           js.context['devicePixelRatio'];
     } catch (e) {
       try {
-        return (html.document.body?.clientWidth ?? 0.0) *
-            html.window.devicePixelRatio;
+        return js.context['document']['body']['clientWidth'] *
+            js.context['devicePixelRatio'];
       } catch (e) {
         return 0.0;
       }
@@ -20,12 +19,12 @@ class DeviceInfo {
 
   static double physicalSizeHeight = (() {
     try {
-      return js.context['document']['body']['clientHeight'] /
+      return js.context['document'].body.clientHeight *
           js.context['devicePixelRatio'];
     } catch (e) {
       try {
-        return (html.document.body?.clientHeight ?? 0.0) *
-            html.window.devicePixelRatio;
+        return js.context['document']['body']['clientHeight'] *
+            js.context['devicePixelRatio'];
       } catch (e) {
         return 0.0;
       }
@@ -36,11 +35,7 @@ class DeviceInfo {
     try {
       return js.context['devicePixelRatio'];
     } catch (e) {
-      try {
-        return html.window.devicePixelRatio;
-      } catch (e) {
-        return 1.0;
-      }
+      return 1.0;
     }
   })();
 
@@ -66,10 +61,32 @@ class DeviceInfo {
     js.context.callMethod('addEventListener', [
       'resize',
       (event) {
-        physicalSizeWidth = js.context['document']['body']['clientWidth'] /
-            js.context['devicePixelRatio'];
-        physicalSizeHeight = js.context['document']['body']['clientHeight'] /
-            js.context['devicePixelRatio'];
+        physicalSizeWidth = (() {
+          try {
+            return js.context['document'].body.clientWidth *
+                js.context['devicePixelRatio'];
+          } catch (e) {
+            try {
+              return js.context['document']['body']['clientWidth'] *
+                  js.context['devicePixelRatio'];
+            } catch (e) {
+              return 0.0;
+            }
+          }
+        })();
+        physicalSizeHeight = (() {
+          try {
+            return js.context['document'].body.clientHeight *
+                js.context['devicePixelRatio'];
+          } catch (e) {
+            try {
+              return js.context['document']['body']['clientHeight'] *
+                  js.context['devicePixelRatio'];
+            } catch (e) {
+              return 0.0;
+            }
+          }
+        })();
         devicePixelRatio = js.context['devicePixelRatio'];
         callback();
       }
