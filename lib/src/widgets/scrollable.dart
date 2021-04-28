@@ -17,8 +17,7 @@ import 'framework.dart';
 import 'gesture_detector.dart';
 import 'notification_listener.dart';
 import 'primary_scroll_controller.dart';
-import 'restoration.dart';
-import 'restoration_properties.dart';
+
 import 'scroll_configuration.dart';
 import 'scroll_context.dart';
 import 'scroll_controller.dart';
@@ -373,7 +372,7 @@ class _ScrollableScope extends InheritedWidget {
 /// This class is not intended to be subclassed. To specialize the behavior of a
 /// [Scrollable], provide it with a [ScrollPhysics].
 class ScrollableState extends State<Scrollable>
-    with TickerProviderStateMixin, RestorationMixin
+    with TickerProviderStateMixin
     implements ScrollContext {
   /// The manager for this [Scrollable] widget's viewport position.
   ///
@@ -382,9 +381,6 @@ class ScrollableState extends State<Scrollable>
   /// [ScrollPosition] in its [ScrollController.createScrollPosition] method.
   ScrollPosition get position => _position!;
   ScrollPosition? _position;
-
-  final _RestorableScrollOffset _persistedScrollOffset =
-      _RestorableScrollOffset();
 
   @override
   AxisDirection get axisDirection => widget.axisDirection;
@@ -416,23 +412,7 @@ class ScrollableState extends State<Scrollable>
   }
 
   @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(_persistedScrollOffset, 'offset');
-    assert(_position != null);
-    if (_persistedScrollOffset.value != null) {
-      position.restoreOffset(_persistedScrollOffset.value!,
-          initialRestore: initialRestore);
-    }
-  }
-
-  @override
-  void saveOffset(double offset) {
-    assert(debugIsSerializableForRestoration(offset));
-    _persistedScrollOffset.value = offset;
-    // [saveOffset] is called after a scrolling ends and it is usually not
-    // followed by a frame. Therefore, manually flush restoration data.
-    ServicesBinding.instance!.restorationManager.flushData();
-  }
+  void saveOffset(double offset) {}
 
   @override
   void didChangeDependencies() {
@@ -468,7 +448,6 @@ class ScrollableState extends State<Scrollable>
   void dispose() {
     widget.controller?.detach(position);
     position.dispose();
-    _persistedScrollOffset.dispose();
     super.dispose();
   }
 
@@ -1068,29 +1047,4 @@ class ScrollAction extends Action<ScrollIntent> {
       curve: Curves.easeInOut,
     );
   }
-}
-
-// Not using a RestorableDouble because we want to allow null values and override
-// [enabled].
-class _RestorableScrollOffset extends RestorableValue<double?> {
-  @override
-  double? createDefaultValue() => null;
-
-  @override
-  void didUpdateValue(double? oldValue) {
-    notifyListeners();
-  }
-
-  @override
-  double fromPrimitives(Object? data) {
-    return data! as double;
-  }
-
-  @override
-  Object? toPrimitives() {
-    return value;
-  }
-
-  @override
-  bool get enabled => value != null;
 }

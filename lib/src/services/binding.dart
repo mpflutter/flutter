@@ -11,7 +11,6 @@ import 'package:flutter/scheduler.dart';
 
 import 'asset_bundle.dart';
 import 'binary_messenger.dart';
-import 'restoration.dart';
 import 'system_channels.dart';
 
 /// Listens for platform messages and directs them to the [defaultBinaryMessenger].
@@ -26,7 +25,6 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
     super.initInstances();
     _instance = this;
     _defaultBinaryMessenger = createBinaryMessenger();
-    _restorationManager = createRestorationManager();
     window.onPlatformMessage = defaultBinaryMessenger.handlePlatformMessage;
     initLicenses();
     SystemChannels.system.setMessageHandler(
@@ -209,27 +207,6 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
         return AppLifecycleState.detached;
     }
     return null;
-  }
-
-  /// The [RestorationManager] synchronizes the restoration data between
-  /// engine and framework.
-  ///
-  /// See the docs for [RestorationManager] for a discussion of restoration
-  /// state and how it is organized in Flutter.
-  ///
-  /// To use a different [RestorationManager] subclasses can override
-  /// [createRestorationManager], which is called to create the instance
-  /// returned by this getter.
-  RestorationManager get restorationManager => _restorationManager;
-  late RestorationManager _restorationManager;
-
-  /// Creates the [RestorationManager] instance available via
-  /// [restorationManager].
-  ///
-  /// Can be overriden in subclasses to create a different [RestorationManager].
-  @protected
-  RestorationManager createRestorationManager() {
-    return RestorationManager();
   }
 }
 
