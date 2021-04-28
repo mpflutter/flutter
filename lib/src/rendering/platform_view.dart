@@ -7,7 +7,6 @@ import 'package:flutter/ui/ui.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 import 'box.dart';
@@ -108,15 +107,11 @@ class RenderAndroidView extends RenderBox with _PlatformViewGestureMixin {
     _viewController.removeOnPlatformViewCreatedListener(_onPlatformViewCreated);
     _viewController = viewController;
     _sizePlatformView();
-    if (_viewController.isCreated) {
-      markNeedsSemanticsUpdate();
-    }
+    if (_viewController.isCreated) {}
     _viewController.addOnPlatformViewCreatedListener(_onPlatformViewCreated);
   }
 
-  void _onPlatformViewCreated(int id) {
-    markNeedsSemanticsUpdate();
-  }
+  void _onPlatformViewCreated(int id) {}
 
   /// {@template flutter.rendering.platformView.updateGestureRecognizers}
   /// Updates which gestures should be forwarded to the platform view.
@@ -214,17 +209,6 @@ class RenderAndroidView extends RenderBox with _PlatformViewGestureMixin {
       freeze: _state == _PlatformViewState.resizing,
     ));
   }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-
-    config.isSemanticBoundary = true;
-
-    if (_viewController.isCreated) {
-      config.platformViewId = _viewController.viewId;
-    }
-  }
 }
 
 /// A render object for an iOS UIKit UIView.
@@ -275,9 +259,7 @@ class RenderUiKitView extends RenderBox {
     final bool needsSemanticsUpdate = _viewController.id != viewController.id;
     _viewController = viewController;
     markNeedsPaint();
-    if (needsSemanticsUpdate) {
-      markNeedsSemanticsUpdate();
-    }
+    if (needsSemanticsUpdate) {}
   }
 
   /// How to behave during hit testing.
@@ -367,13 +349,6 @@ class RenderUiKitView extends RenderBox {
       _viewController.rejectGesture();
     }
     _lastPointerDownEvent = null;
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config.isSemanticBoundary = true;
-    config.platformViewId = _viewController.id;
   }
 
   @override
@@ -617,9 +592,7 @@ class PlatformViewRenderBox extends RenderBox with _PlatformViewGestureMixin {
     final bool needsSemanticsUpdate = _controller.viewId != controller.viewId;
     _controller = controller;
     markNeedsPaint();
-    if (needsSemanticsUpdate) {
-      markNeedsSemanticsUpdate();
-    }
+    if (needsSemanticsUpdate) {}
   }
 
   /// {@macro  flutter.rendering.platformView.updateGestureRecognizers}
@@ -656,14 +629,6 @@ class PlatformViewRenderBox extends RenderBox with _PlatformViewGestureMixin {
       rect: offset & size,
       viewId: _controller.viewId,
     ));
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    assert(_controller.viewId != null);
-    config.isSemanticBoundary = true;
-    config.platformViewId = _controller.viewId;
   }
 }
 

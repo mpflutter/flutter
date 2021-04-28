@@ -437,13 +437,11 @@ class _RenderSingleChildViewport extends RenderBox
     if (value != _clipBehavior) {
       _clipBehavior = value;
       markNeedsPaint();
-      markNeedsSemanticsUpdate();
     }
   }
 
   void _hasScrolled() {
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   @override

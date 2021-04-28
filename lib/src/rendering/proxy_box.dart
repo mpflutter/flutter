@@ -11,7 +11,6 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 import 'package:vector_math/vector_math_64.dart';
@@ -799,8 +798,6 @@ class RenderOpacity extends RenderProxyBox {
     if (didNeedCompositing != alwaysNeedsCompositing)
       markNeedsCompositingBitsUpdate();
     markNeedsPaint();
-    if (wasVisible != (_alpha != 0) && !alwaysIncludeSemantics)
-      markNeedsSemanticsUpdate();
   }
 
   /// Whether child semantics are included regardless of the opacity.
@@ -813,7 +810,6 @@ class RenderOpacity extends RenderProxyBox {
   set alwaysIncludeSemantics(bool value) {
     if (value == _alwaysIncludeSemantics) return;
     _alwaysIncludeSemantics = value;
-    markNeedsSemanticsUpdate();
   }
 
   @override
@@ -900,7 +896,6 @@ mixin RenderAnimatedOpacityMixin<T extends RenderObject>
   set alwaysIncludeSemantics(bool value) {
     if (value == _alwaysIncludeSemantics) return;
     _alwaysIncludeSemantics = value;
-    markNeedsSemanticsUpdate();
   }
 
   @override
@@ -925,7 +920,6 @@ mixin RenderAnimatedOpacityMixin<T extends RenderObject>
       if (child != null && didNeedCompositing != _currentlyNeedsCompositing)
         markNeedsCompositingBitsUpdate();
       markNeedsPaint();
-      if (oldAlpha == 0 || _alpha == 0) markNeedsSemanticsUpdate();
     }
   }
 
@@ -1278,7 +1272,6 @@ abstract class _RenderCustomClip<T> extends RenderProxyBox {
   void _markNeedsClip() {
     _clip = null;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   T get _defaultClip;
@@ -1729,12 +1722,6 @@ abstract class _RenderPhysicalModelBase<T> extends _RenderCustomClip<T> {
   bool get alwaysNeedsCompositing => true;
 
   @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config.elevation = elevation;
-  }
-
-  @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
     description.add(DoubleProperty('elevation', elevation));
@@ -2156,7 +2143,6 @@ class RenderTransform extends RenderProxyBox {
     if (_origin == value) return;
     _origin = value;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// The alignment of the origin, relative to the size of the box.
@@ -2176,7 +2162,6 @@ class RenderTransform extends RenderProxyBox {
     if (_alignment == value) return;
     _alignment = value;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// The text direction with which to resolve [alignment].
@@ -2189,7 +2174,6 @@ class RenderTransform extends RenderProxyBox {
     if (_textDirection == value) return;
     _textDirection = value;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// When set to true, hit tests are performed based on the position of the
@@ -2209,49 +2193,42 @@ class RenderTransform extends RenderProxyBox {
     if (_transform == value) return;
     _transform = Matrix4.copy(value);
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// Sets the transform to the identity matrix.
   void setIdentity() {
     _transform!.setIdentity();
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// Concatenates a rotation about the x axis into the transform.
   void rotateX(double radians) {
     _transform!.rotateX(radians);
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// Concatenates a rotation about the y axis into the transform.
   void rotateY(double radians) {
     _transform!.rotateY(radians);
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// Concatenates a rotation about the z axis into the transform.
   void rotateZ(double radians) {
     _transform!.rotateZ(radians);
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// Concatenates a translation by (x, y, z) into the transform.
   void translate(double x, [double y = 0.0, double z = 0.0]) {
     _transform!.translate(x, y, z);
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// Concatenates a scale into the transform.
   void scale(double x, [double? y, double? z]) {
     _transform!.scale(x, y, z);
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   Matrix4? get _effectiveTransform {
@@ -2457,7 +2434,6 @@ class RenderFittedBox extends RenderProxyBox {
     if (value != _clipBehavior) {
       _clipBehavior = value;
       markNeedsPaint();
-      markNeedsSemanticsUpdate();
     }
   }
 
@@ -2587,7 +2563,6 @@ class RenderFractionalTranslation extends RenderProxyBox {
     if (_translation == value) return;
     _translation = value;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   @override
@@ -3120,8 +3095,6 @@ class RenderIgnorePointer extends RenderProxyBox {
     assert(value != null);
     if (value == _ignoring) return;
     _ignoring = value;
-    if (_ignoringSemantics == null || !_ignoringSemantics!)
-      markNeedsSemanticsUpdate();
   }
 
   /// Whether the semantics of this render object is ignored when compiling the semantics tree.
@@ -3135,8 +3108,6 @@ class RenderIgnorePointer extends RenderProxyBox {
     if (value == _ignoringSemantics) return;
     final bool oldEffectiveValue = _effectiveIgnoringSemantics;
     _ignoringSemantics = value;
-    if (oldEffectiveValue != _effectiveIgnoringSemantics)
-      markNeedsSemanticsUpdate();
   }
 
   bool get _effectiveIgnoringSemantics => ignoringSemantics ?? ignoring;
@@ -3319,7 +3290,6 @@ class RenderAbsorbPointer extends RenderProxyBox {
   set absorbing(bool value) {
     if (_absorbing == value) return;
     _absorbing = value;
-    if (ignoringSemantics == null) markNeedsSemanticsUpdate();
   }
 
   /// Whether the semantics of this render object is ignored when compiling the semantics tree.
@@ -3333,8 +3303,6 @@ class RenderAbsorbPointer extends RenderProxyBox {
     if (value == _ignoringSemantics) return;
     final bool oldEffectiveValue = _effectiveIgnoringSemantics;
     _ignoringSemantics = value;
-    if (oldEffectiveValue != _effectiveIgnoringSemantics)
-      markNeedsSemanticsUpdate();
   }
 
   bool get _effectiveIgnoringSemantics => ignoringSemantics ?? absorbing;
@@ -3448,9 +3416,7 @@ class RenderSemanticsAnnotations extends RenderProxyBox {
     String? increasedValue,
     String? decreasedValue,
     String? hint,
-    SemanticsHintOverrides? hintOverrides,
     TextDirection? textDirection,
-    SemanticsSortKey? sortKey,
     VoidCallback? onTap,
     VoidCallback? onDismiss,
     VoidCallback? onLongPress,
@@ -3463,14 +3429,8 @@ class RenderSemanticsAnnotations extends RenderProxyBox {
     VoidCallback? onCopy,
     VoidCallback? onCut,
     VoidCallback? onPaste,
-    MoveCursorHandler? onMoveCursorForwardByCharacter,
-    MoveCursorHandler? onMoveCursorBackwardByCharacter,
-    MoveCursorHandler? onMoveCursorForwardByWord,
-    MoveCursorHandler? onMoveCursorBackwardByWord,
-    SetSelectionHandler? onSetSelection,
     VoidCallback? onDidGainAccessibilityFocus,
     VoidCallback? onDidLoseAccessibilityFocus,
-    Map<CustomSemanticsAction, VoidCallback>? customSemanticsActions,
   })  : assert(container != null),
         super(child);
 }
@@ -3497,13 +3457,6 @@ class RenderBlockSemantics extends RenderProxyBox {
     assert(value != null);
     if (value == _blocking) return;
     _blocking = value;
-    markNeedsSemanticsUpdate();
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config.isBlockingSemanticsOfPreviouslyPaintedNodes = blocking;
   }
 
   @override
@@ -3523,14 +3476,6 @@ class RenderBlockSemantics extends RenderProxyBox {
 class RenderMergeSemantics extends RenderProxyBox {
   /// Creates a render object that merges the semantics from its descendants.
   RenderMergeSemantics({RenderBox? child}) : super(child);
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config
-      ..isSemanticBoundary = true
-      ..isMergingSemanticsOfDescendants = true;
-  }
 }
 
 /// Excludes this subtree from the semantic tree.
@@ -3557,7 +3502,6 @@ class RenderExcludeSemantics extends RenderProxyBox {
     assert(value != null);
     if (value == _excluding) return;
     _excluding = value;
-    markNeedsSemanticsUpdate();
   }
 
   @override
@@ -3598,14 +3542,6 @@ class RenderIndexedSemantics extends RenderProxyBox {
   set index(int value) {
     if (value == index) return;
     _index = value;
-    markNeedsSemanticsUpdate();
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config.isSemanticBoundary = true;
-    config.indexInParent = index;
   }
 
   @override

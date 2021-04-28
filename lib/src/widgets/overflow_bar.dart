@@ -337,7 +337,6 @@ class _RenderOverflowBar extends RenderBox
     if (value == _clipBehavior) return;
     _clipBehavior = value;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   @override

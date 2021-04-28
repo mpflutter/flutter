@@ -7,7 +7,6 @@ import 'dart:math' as math;
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/semantics.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'box.dart';
@@ -194,28 +193,6 @@ abstract class RenderViewportBase<
         _cacheExtentStyle = cacheExtentStyle,
         _clipBehavior = clipBehavior;
 
-  /// Report the semantics of this node, for example for accessibility purposes.
-  ///
-  /// [RenderViewportBase] adds [RenderViewport.useTwoPaneSemantics] to the
-  /// provided [SemanticsConfiguration] to support children using
-  /// [RenderViewport.excludeFromScrolling].
-  ///
-  /// This method should be overridden by subclasses that have interesting
-  /// semantic information. Overriding subclasses should call
-  /// `super.describeSemanticsConfiguration(config)` to ensure
-  /// [RenderViewport.useTwoPaneSemantics] is still added to `config`.
-  ///
-  /// See also:
-  ///
-  /// * [RenderObject.describeSemanticsConfiguration], for important
-  ///   details about not mutating a [SemanticsConfiguration] out of context.
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-
-    config.addTagForChildren(RenderViewport.useTwoPaneSemantics);
-  }
-
   @override
   void visitChildrenForSemantics(RenderObjectVisitor visitor) {
     childrenInPaintOrder
@@ -364,7 +341,6 @@ abstract class RenderViewportBase<
     if (value != _clipBehavior) {
       _clipBehavior = value;
       markNeedsPaint();
-      markNeedsSemanticsUpdate();
     }
   }
 
@@ -1310,43 +1286,6 @@ class RenderViewport
     addAll(children);
     if (center == null && firstChild != null) _center = firstChild;
   }
-
-  /// If a [RenderAbstractViewport] overrides
-  /// [RenderObject.describeSemanticsConfiguration] to add the [SemanticsTag]
-  /// [useTwoPaneSemantics] to its [SemanticsConfiguration], two semantics nodes
-  /// will be used to represent the viewport with its associated scrolling
-  /// actions in the semantics tree.
-  ///
-  /// Two semantics nodes (an inner and an outer node) are necessary to exclude
-  /// certain child nodes (via the [excludeFromScrolling] tag) from the
-  /// scrollable area for semantic purposes: The [SemanticsNode]s of children
-  /// that should be excluded from scrolling will be attached to the outer node.
-  /// The semantic scrolling actions and the [SemanticsNode]s of scrollable
-  /// children will be attached to the inner node, which itself is a child of
-  /// the outer node.
-  ///
-  /// See also:
-  ///
-  /// * [RenderViewportBase.describeSemanticsConfiguration], which adds this
-  ///   tag to its [SemanticsConfiguration].
-  static const SemanticsTag useTwoPaneSemantics =
-      SemanticsTag('RenderViewport.twoPane');
-
-  /// When a top-level [SemanticsNode] below a [RenderAbstractViewport] is
-  /// tagged with [excludeFromScrolling] it will not be part of the scrolling
-  /// area for semantic purposes.
-  ///
-  /// This behavior is only active if the [RenderAbstractViewport]
-  /// tagged its [SemanticsConfiguration] with [useTwoPaneSemantics].
-  /// Otherwise, the [excludeFromScrolling] tag is ignored.
-  ///
-  /// As an example, a [RenderSliver] that stays on the screen within a
-  /// [Scrollable] even though the user has scrolled past it (e.g. a pinned app
-  /// bar) can tag its [SemanticsNode] with [excludeFromScrolling] to indicate
-  /// that it should no longer be considered for semantic actions related to
-  /// scrolling.
-  static const SemanticsTag excludeFromScrolling =
-      SemanticsTag('RenderViewport.excludeFromScrolling');
 
   @override
   void setupParentData(RenderObject child) {

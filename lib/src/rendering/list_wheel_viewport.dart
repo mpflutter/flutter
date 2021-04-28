@@ -271,7 +271,6 @@ class RenderListWheelViewport extends RenderBox
     if (value == _diameterRatio) return;
     _diameterRatio = value;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// {@template flutter.rendering.wheelList.perspective}
@@ -300,7 +299,6 @@ class RenderListWheelViewport extends RenderBox
     if (value == _perspective) return;
     _perspective = value;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// {@template flutter.rendering.wheelList.offAxisFraction}
@@ -431,7 +429,6 @@ class RenderListWheelViewport extends RenderBox
     if (value == _squeeze) return;
     _squeeze = value;
     markNeedsLayout();
-    markNeedsSemanticsUpdate();
   }
 
   /// {@template flutter.rendering.wheelList.renderChildrenOutsideViewport}
@@ -455,7 +452,6 @@ class RenderListWheelViewport extends RenderBox
     if (value == _renderChildrenOutsideViewport) return;
     _renderChildrenOutsideViewport = value;
     markNeedsLayout();
-    markNeedsSemanticsUpdate();
   }
 
   /// {@macro flutter.widgets.Clip}
@@ -468,13 +464,11 @@ class RenderListWheelViewport extends RenderBox
     if (value != _clipBehavior) {
       _clipBehavior = value;
       markNeedsPaint();
-      markNeedsSemanticsUpdate();
     }
   }
 
   void _hasScrolled() {
     markNeedsLayout();
-    markNeedsSemanticsUpdate();
   }
 
   @override

@@ -10,8 +10,6 @@ typedef VoidCallback = void Function();
 typedef FrameCallback = void Function(Duration duration);
 typedef TimingsCallback = void Function(List<FrameTiming> timings);
 typedef PointerDataPacketCallback = void Function(PointerDataPacket packet);
-typedef SemanticsActionCallback = void Function(
-    int id, SemanticsAction action, ByteData? args);
 typedef PlatformMessageResponseCallback = void Function(ByteData? data);
 typedef PlatformMessageCallback = void Function(
     String name, ByteData? data, PlatformMessageResponseCallback? callback);
@@ -238,13 +236,10 @@ abstract class Window {
   bool get semanticsEnabled => false;
   VoidCallback? get onSemanticsEnabledChanged;
   set onSemanticsEnabledChanged(VoidCallback? callback);
-  SemanticsActionCallback? get onSemanticsAction;
-  set onSemanticsAction(SemanticsActionCallback? callback);
   VoidCallback? get onAccessibilityFeaturesChanged;
   set onAccessibilityFeaturesChanged(VoidCallback? callback);
   PlatformMessageCallback? get onPlatformMessage;
   set onPlatformMessage(PlatformMessageCallback? callback);
-  void updateSemantics(SemanticsUpdate update) {}
 
   void sendPlatformMessage(
     String name,

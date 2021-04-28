@@ -8,13 +8,11 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/semantics.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'box.dart';
 import 'object.dart';
 import 'sliver.dart';
-import 'viewport.dart';
 import 'viewport_offset.dart';
 
 // Trims the specified edges of the given `Rect` [original], so that they do not
@@ -337,12 +335,6 @@ abstract class RenderSliverPersistentHeader extends RenderSliver
       }
       context.paintChild(child!, offset);
     }
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config.addTagForChildren(RenderViewport.excludeFromScrolling);
   }
 
   @override

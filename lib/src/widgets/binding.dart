@@ -284,8 +284,7 @@ mixin WidgetsBinding
         ServicesBinding,
         SchedulerBinding,
         GestureBinding,
-        RendererBinding,
-        SemanticsBinding {
+        RendererBinding {
   @override
   void initInstances() {
     super.initInstances();
@@ -302,7 +301,6 @@ mixin WidgetsBinding
     _buildOwner = BuildOwner();
     buildOwner!.onBuildScheduled = _handleBuildScheduled;
     window.onLocaleChanged = handleLocaleChanged;
-    window.onAccessibilityFeaturesChanged = handleAccessibilityFeaturesChanged;
     SystemChannels.navigation.setMethodCallHandler(_handleNavigationInvocation);
     FlutterErrorDetails.propertiesTransformers.add(transformDebugCreator);
   }
@@ -613,13 +611,6 @@ mixin WidgetsBinding
     super.handlePlatformBrightnessChanged();
     for (final WidgetsBindingObserver observer in _observers)
       observer.didChangePlatformBrightness();
-  }
-
-  @override
-  void handleAccessibilityFeaturesChanged() {
-    super.handleAccessibilityFeaturesChanged();
-    for (final WidgetsBindingObserver observer in _observers)
-      observer.didChangeAccessibilityFeatures();
   }
 
   /// Called when the system locale changes.
@@ -1273,7 +1264,6 @@ class WidgetsFlutterBinding extends BindingBase
         SchedulerBinding,
         ServicesBinding,
         PaintingBinding,
-        SemanticsBinding,
         RendererBinding,
         WidgetsBinding {
   /// Returns an instance of the [WidgetsBinding], creating and

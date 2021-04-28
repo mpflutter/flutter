@@ -1164,32 +1164,6 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
     }
   }
 
-  /// This method can be called to filter the list of available semantic actions,
-  /// after the render object was created.
-  ///
-  /// The actual filtering is happening in the next frame and a frame will be
-  /// scheduled if non is pending.
-  ///
-  /// This is used by [Scrollable] to configure system accessibility tools so
-  /// that they know in which direction a particular list can be scrolled.
-  ///
-  /// If this is never called, then the actions are not filtered. If the list of
-  /// actions to filter changes, it must be called again.
-  void replaceSemanticsActions(Set<SemanticsAction> actions) {
-    if (widget.excludeFromSemantics) return;
-
-    final RenderSemanticsGestureHandler? semanticsGestureHandler =
-        context.findRenderObject() as RenderSemanticsGestureHandler?;
-    assert(() {
-      if (semanticsGestureHandler == null) {
-        throw FlutterError(
-            'Unexpected call to replaceSemanticsActions() method of RawGestureDetectorState.\n'
-            'The replaceSemanticsActions() method can only be called after the RenderSemanticsGestureHandler has been created.');
-      }
-      return true;
-    }());
-  }
-
   @override
   void dispose() {
     for (final GestureRecognizer recognizer in _recognizers!.values)

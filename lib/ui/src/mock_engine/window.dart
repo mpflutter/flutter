@@ -124,8 +124,6 @@ class MockWindow extends Window {
   bool get semanticsEnabled => false;
   VoidCallback? get onSemanticsEnabledChanged => null;
   set onSemanticsEnabledChanged(VoidCallback? callback) {}
-  SemanticsActionCallback? get onSemanticsAction => null;
-  set onSemanticsAction(SemanticsActionCallback? callback) {}
   VoidCallback? get onAccessibilityFeaturesChanged => null;
   set onAccessibilityFeaturesChanged(VoidCallback? callback) {}
 
@@ -136,8 +134,6 @@ class MockWindow extends Window {
   set onPlatformMessage(PlatformMessageCallback? callback) {
     _onPlatformMessage = callback;
   }
-
-  void updateSemantics(SemanticsUpdate update) {}
 
   void sendPlatformMessage(
     String name,

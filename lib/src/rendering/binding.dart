@@ -9,7 +9,6 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 import 'box.dart';
@@ -30,7 +29,6 @@ mixin RendererBinding
         ServicesBinding,
         SchedulerBinding,
         GestureBinding,
-        SemanticsBinding,
         HitTestable {
   @override
   void initInstances() {
@@ -45,8 +43,7 @@ mixin RendererBinding
       ..onMetricsChanged = handleMetricsChanged
       ..onTextScaleFactorChanged = handleTextScaleFactorChanged
       ..onPlatformBrightnessChanged = handlePlatformBrightnessChanged
-      ..onSemanticsEnabledChanged = _handleSemanticsEnabledChanged
-      ..onSemanticsAction = _handleSemanticsAction;
+      ..onSemanticsEnabledChanged = _handleSemanticsEnabledChanged;
     initRenderView();
     _handleSemanticsEnabledChanged();
     assert(renderView != null);
@@ -126,7 +123,6 @@ mixin RendererBinding
       registerSignalServiceExtension(
         name: 'debugDumpSemanticsTreeInTraversalOrder',
         callback: () {
-          debugDumpSemanticsTree(DebugSemanticsDumpOrder.traversalOrder);
           return debugPrintDone;
         },
       );
@@ -134,7 +130,6 @@ mixin RendererBinding
       registerSignalServiceExtension(
         name: 'debugDumpSemanticsTreeInInverseHitTestOrder',
         callback: () {
-          debugDumpSemanticsTree(DebugSemanticsDumpOrder.inverseHitTest);
           return debugPrintDone;
         },
       );
@@ -249,8 +244,6 @@ mixin RendererBinding
     );
   }
 
-  SemanticsHandle? _semanticsHandle;
-
   /// Creates a [MouseTracker] which manages state about currently connected
   /// mice, for hover notification.
   ///
@@ -267,22 +260,9 @@ mixin RendererBinding
 
   /// Whether the render tree associated with this binding should produce a tree
   /// of [SemanticsNode] objects.
-  void setSemanticsEnabled(bool enabled) {
-    if (enabled) {
-      _semanticsHandle ??= _pipelineOwner.ensureSemantics();
-    } else {
-      _semanticsHandle?.dispose();
-      _semanticsHandle = null;
-    }
-  }
+  void setSemanticsEnabled(bool enabled) {}
 
-  void _handleSemanticsAction(int id, SemanticsAction action, ByteData? args) {
-    _pipelineOwner.semanticsOwner?.performAction(
-      id,
-      action,
-      args != null ? const StandardMessageCodec().decodeMessage(args) : null,
-    );
-  }
+  void _handleSemanticsAction(int id, dynamic action, ByteData? args) {}
 
   void _handleSemanticsOwnerCreated() {
     renderView.scheduleInitialSemantics();
@@ -470,11 +450,7 @@ void debugDumpLayerTree() {
 ///
 /// The order in which the children of a [SemanticsNode] will be printed is
 /// controlled by the [childOrder] parameter.
-void debugDumpSemanticsTree(DebugSemanticsDumpOrder childOrder) {
-  debugPrint(RendererBinding.instance?.renderView.debugSemantics
-          ?.toStringDeep(childOrder: childOrder) ??
-      'Semantics not collected.');
-}
+void debugDumpSemanticsTree(dynamic childOrder) {}
 
 /// A concrete binding for applications that use the Rendering framework
 /// directly. This is the glue that binds the framework to the Flutter engine.
@@ -488,7 +464,6 @@ class RenderingFlutterBinding extends BindingBase
         GestureBinding,
         SchedulerBinding,
         ServicesBinding,
-        SemanticsBinding,
         PaintingBinding,
         RendererBinding {
   /// Creates a binding for the rendering layer.

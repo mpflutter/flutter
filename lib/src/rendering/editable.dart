@@ -9,7 +9,6 @@ import 'package:flutter/ui/ui.dart' as ui
 import 'package:characters/characters.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 import 'box.dart';
@@ -371,7 +370,6 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
   set obscureText(bool value) {
     if (_obscureText == value) return;
     _obscureText = value;
-    markNeedsSemanticsUpdate();
   }
 
   /// The object that controls the text selection, used by this render object
@@ -613,7 +611,6 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     _textPainter.text = value;
     _cachedPlainText = null;
     markNeedsTextLayout();
-    markNeedsSemanticsUpdate();
   }
 
   /// How the text should be aligned horizontally.
@@ -649,7 +646,6 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     if (_textPainter.textDirection == value) return;
     _textPainter.textDirection = value;
     markNeedsTextLayout();
-    markNeedsSemanticsUpdate();
   }
 
   /// Used by this renderer's internal [TextPainter] to select a locale-specific
@@ -728,7 +724,6 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       RawKeyboard.instance.removeListener(_handleKeyEvent);
       _listenerAttached = false;
     }
-    markNeedsSemanticsUpdate();
   }
 
   /// Whether this rendering object will take a full line regardless the text width.
@@ -748,7 +743,6 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     assert(value != null);
     if (_readOnly == value) return;
     _readOnly = value;
-    markNeedsSemanticsUpdate();
   }
 
   /// The maximum number of lines for the text to span, wrapping if necessary.
@@ -830,7 +824,6 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     _selection = value;
     _selectionRects = null;
     markNeedsPaint();
-    markNeedsSemanticsUpdate();
   }
 
   /// The offset at which the text should be painted.
@@ -997,7 +990,6 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     if (_enableInteractiveSelection == value) return;
     _enableInteractiveSelection = value;
     markNeedsTextLayout();
-    markNeedsSemanticsUpdate();
   }
 
   /// Whether interactive selection are enabled based on the values of
@@ -1079,147 +1071,7 @@ class RenderEditable extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     if (value != _clipBehavior) {
       _clipBehavior = value;
       markNeedsPaint();
-      markNeedsSemanticsUpdate();
     }
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-
-    config
-      ..value =
-          obscureText ? obscuringCharacter * _plainText.length : _plainText
-      ..isObscured = obscureText
-      ..isMultiline = _isMultiline
-      ..textDirection = textDirection
-      ..isFocused = hasFocus
-      ..isTextField = true
-      ..isReadOnly = readOnly;
-
-    if (hasFocus && selectionEnabled)
-      config.onSetSelection = _handleSetSelection;
-
-    if (selectionEnabled && selection?.isValid == true) {
-      config.textSelection = selection;
-      if (_textPainter.getOffsetBefore(selection!.extentOffset) != null) {
-        config
-          ..onMoveCursorBackwardByWord = _handleMoveCursorBackwardByWord
-          ..onMoveCursorBackwardByCharacter =
-              _handleMoveCursorBackwardByCharacter;
-      }
-      if (_textPainter.getOffsetAfter(selection!.extentOffset) != null) {
-        config
-          ..onMoveCursorForwardByWord = _handleMoveCursorForwardByWord
-          ..onMoveCursorForwardByCharacter =
-              _handleMoveCursorForwardByCharacter;
-      }
-    }
-  }
-
-  // TODO(ianh): in theory, [selection] could become null between when
-  // we last called describeSemanticsConfiguration and when the
-  // callbacks are invoked, in which case the callbacks will crash...
-
-  void _handleSetSelection(TextSelection selection) {
-    _handleSelectionChange(selection, SelectionChangedCause.keyboard);
-  }
-
-  void _handleMoveCursorForwardByCharacter(bool extentSelection) {
-    assert(selection != null);
-    final int? extentOffset =
-        _textPainter.getOffsetAfter(selection!.extentOffset);
-    if (extentOffset == null) return;
-    final int baseOffset =
-        !extentSelection ? extentOffset : selection!.baseOffset;
-    _handleSelectionChange(
-      TextSelection(baseOffset: baseOffset, extentOffset: extentOffset),
-      SelectionChangedCause.keyboard,
-    );
-  }
-
-  void _handleMoveCursorBackwardByCharacter(bool extentSelection) {
-    assert(selection != null);
-    final int? extentOffset =
-        _textPainter.getOffsetBefore(selection!.extentOffset);
-    if (extentOffset == null) return;
-    final int baseOffset =
-        !extentSelection ? extentOffset : selection!.baseOffset;
-    _handleSelectionChange(
-      TextSelection(baseOffset: baseOffset, extentOffset: extentOffset),
-      SelectionChangedCause.keyboard,
-    );
-  }
-
-  void _handleMoveCursorForwardByWord(bool extentSelection) {
-    assert(selection != null);
-    final TextRange currentWord =
-        _textPainter.getWordBoundary(selection!.extent);
-    final TextRange? nextWord = _getNextWord(currentWord.end);
-    if (nextWord == null) return;
-    final int baseOffset =
-        extentSelection ? selection!.baseOffset : nextWord.start;
-    _handleSelectionChange(
-      TextSelection(
-        baseOffset: baseOffset,
-        extentOffset: nextWord.start,
-      ),
-      SelectionChangedCause.keyboard,
-    );
-  }
-
-  void _handleMoveCursorBackwardByWord(bool extentSelection) {
-    assert(selection != null);
-    final TextRange currentWord =
-        _textPainter.getWordBoundary(selection!.extent);
-    final TextRange? previousWord = _getPreviousWord(currentWord.start - 1);
-    if (previousWord == null) return;
-    final int baseOffset =
-        extentSelection ? selection!.baseOffset : previousWord.start;
-    _handleSelectionChange(
-      TextSelection(
-        baseOffset: baseOffset,
-        extentOffset: previousWord.start,
-      ),
-      SelectionChangedCause.keyboard,
-    );
-  }
-
-  TextRange? _getNextWord(int offset) {
-    while (true) {
-      final TextRange range =
-          _textPainter.getWordBoundary(TextPosition(offset: offset));
-      if (range == null || !range.isValid || range.isCollapsed) return null;
-      if (!_onlyWhitespace(range)) return range;
-      offset = range.end;
-    }
-  }
-
-  TextRange? _getPreviousWord(int offset) {
-    while (offset >= 0) {
-      final TextRange range =
-          _textPainter.getWordBoundary(TextPosition(offset: offset));
-      if (range == null || !range.isValid || range.isCollapsed) return null;
-      if (!_onlyWhitespace(range)) return range;
-      offset = range.start - 1;
-    }
-    return null;
-  }
-
-  // Check if the given text range only contains white space or separator
-  // characters.
-  //
-  // Includes newline characters from ASCII and separators from the
-  // [unicode separator category](https://www.compart.com/en/unicode/category/Zs)
-  // TODO(jonahwilliams): replace when we expose this ICU information.
-  bool _onlyWhitespace(TextRange range) {
-    for (int i = range.start; i < range.end; i++) {
-      final int codeUnit = text!.codeUnitAt(i)!;
-      if (!_isWhitespace(codeUnit)) {
-        return false;
-      }
-    }
-    return true;
   }
 
   @override

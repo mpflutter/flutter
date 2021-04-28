@@ -9,7 +9,6 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/semantics.dart';
 
 import 'basic.dart';
 import 'binding.dart';
@@ -1167,8 +1166,7 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
   }
 
   void _updateInvertColors() {
-    _invertColors = MediaQuery.maybeOf(context)?.invertColors ??
-        SemanticsBinding.instance!.accessibilityFeatures.invertColors;
+    _invertColors = MediaQuery.maybeOf(context)?.invertColors ?? false;
   }
 
   void _resolveImage() {

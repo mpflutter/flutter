@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'basic.dart';
+import 'container.dart';
 import 'framework.dart';
 
 class _PlaceholderPainter extends CustomPainter {
@@ -30,8 +31,7 @@ class _PlaceholderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_PlaceholderPainter oldPainter) {
-    return oldPainter.color != color
-        || oldPainter.strokeWidth != strokeWidth;
+    return oldPainter.color != color || oldPainter.strokeWidth != strokeWidth;
   }
 
   @override
@@ -86,13 +86,7 @@ class Placeholder extends StatelessWidget {
     return LimitedBox(
       maxWidth: fallbackWidth,
       maxHeight: fallbackHeight,
-      child: CustomPaint(
-        size: Size.infinite,
-        foregroundPainter: _PlaceholderPainter(
-          color: color,
-          strokeWidth: strokeWidth,
-        ),
-      ),
+      child: Container(),
     );
   }
 }

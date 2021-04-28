@@ -7,7 +7,6 @@ import 'package:flutter/ui/ui.dart' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/semantics.dart';
 
 import 'actions.dart';
 import 'basic.dart';
@@ -1581,13 +1580,6 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
                   .dismissed, // dismissed is possible when doing a manual pop gesture
       child: barrier,
     );
-    if (semanticsDismissible && barrierDismissible) {
-      // To be sorted after the _modalScope.
-      barrier = Semantics(
-        sortKey: const OrdinalSortKey(1.0),
-        child: barrier,
-      );
-    }
     return barrier;
   }
 
@@ -1598,13 +1590,11 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   // one of the builders
   Widget _buildModalScope(BuildContext context) {
     // To be sorted before the _modalBarrier.
-    return _modalScopeCache ??= Semantics(
-        sortKey: const OrdinalSortKey(0.0),
-        child: _ModalScope<T>(
-          key: _scopeKey,
-          route: this,
-          // _ModalScope calls buildTransitions() and buildChild(), defined above
-        ));
+    return _modalScopeCache ??= _ModalScope<T>(
+      key: _scopeKey,
+      route: this,
+      // _ModalScope calls buildTransitions() and buildChild(), defined above
+    );
   }
 
   late OverlayEntry _modalScope;

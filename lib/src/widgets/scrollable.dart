@@ -476,13 +476,6 @@ class ScrollableState extends State<Scrollable>
 
   final GlobalKey _scrollSemanticsKey = GlobalKey();
 
-  @override
-  @protected
-  void setSemanticsActions(Set<SemanticsAction> actions) {
-    if (_gestureDetectorKey.currentState != null)
-      _gestureDetectorKey.currentState!.replaceSemanticsActions(actions);
-  }
-
   // GESTURE RECOGNITION AND POINTER IGNORING
 
   final GlobalKey<RawGestureDetectorState> _gestureDetectorKey =
@@ -806,9 +799,7 @@ class _RenderScrollSemantics extends RenderProxyBox {
         _allowImplicitScrolling = allowImplicitScrolling,
         _semanticChildCount = semanticChildCount,
         assert(position != null),
-        super(child) {
-    position.addListener(markNeedsSemanticsUpdate);
-  }
+        super(child) {}
 
   /// Whether this render object is excluded from the semantic tree.
   ScrollPosition get position => _position;
@@ -816,10 +807,7 @@ class _RenderScrollSemantics extends RenderProxyBox {
   set position(ScrollPosition value) {
     assert(value != null);
     if (value == _position) return;
-    _position.removeListener(markNeedsSemanticsUpdate);
     _position = value;
-    _position.addListener(markNeedsSemanticsUpdate);
-    markNeedsSemanticsUpdate();
   }
 
   /// Whether this node can be scrolled implicitly.
@@ -828,7 +816,6 @@ class _RenderScrollSemantics extends RenderProxyBox {
   set allowImplicitScrolling(bool value) {
     if (value == _allowImplicitScrolling) return;
     _allowImplicitScrolling = value;
-    markNeedsSemanticsUpdate();
   }
 
   int? get semanticChildCount => _semanticChildCount;
@@ -836,62 +823,11 @@ class _RenderScrollSemantics extends RenderProxyBox {
   set semanticChildCount(int? value) {
     if (value == semanticChildCount) return;
     _semanticChildCount = value;
-    markNeedsSemanticsUpdate();
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config.isSemanticBoundary = true;
-    if (position.haveDimensions) {
-      config
-        ..hasImplicitScrolling = allowImplicitScrolling
-        ..scrollPosition = _position.pixels
-        ..scrollExtentMax = _position.maxScrollExtent
-        ..scrollExtentMin = _position.minScrollExtent
-        ..scrollChildCount = semanticChildCount;
-    }
-  }
-
-  SemanticsNode? _innerNode;
-
-  @override
-  void assembleSemanticsNode(SemanticsNode node, SemanticsConfiguration config,
-      Iterable<SemanticsNode> children) {
-    if (children.isEmpty ||
-        !children.first.isTagged(RenderViewport.useTwoPaneSemantics)) {
-      super.assembleSemanticsNode(node, config, children);
-      return;
-    }
-
-    _innerNode ??= SemanticsNode(showOnScreen: showOnScreen);
-    _innerNode!
-      ..isMergedIntoParent = node.isPartOfNodeMerging
-      ..rect = node.rect;
-
-    int? firstVisibleIndex;
-    final List<SemanticsNode> excluded = <SemanticsNode>[_innerNode!];
-    final List<SemanticsNode> included = <SemanticsNode>[];
-    for (final SemanticsNode child in children) {
-      assert(child.isTagged(RenderViewport.useTwoPaneSemantics));
-      if (child.isTagged(RenderViewport.excludeFromScrolling)) {
-        excluded.add(child);
-      } else {
-        if (!child.hasFlag(SemanticsFlag.isHidden))
-          firstVisibleIndex ??= child.indexInParent;
-        included.add(child);
-      }
-    }
-    config.scrollIndex = firstVisibleIndex;
-    node.updateWith(config: null, childrenInInversePaintOrder: excluded);
-    _innerNode!
-        .updateWith(config: config, childrenInInversePaintOrder: included);
   }
 
   @override
   void clearSemantics() {
     super.clearSemantics();
-    _innerNode = null;
   }
 }
 

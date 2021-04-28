@@ -686,7 +686,6 @@ class RenderUnconstrainedBox extends RenderAligningShiftedBox
     if (value != _clipBehavior) {
       _clipBehavior = value;
       markNeedsPaint();
-      markNeedsSemanticsUpdate();
     }
   }
 

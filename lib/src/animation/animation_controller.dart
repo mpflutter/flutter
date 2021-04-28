@@ -8,7 +8,6 @@ import 'package:flutter/ui/ui.dart' as ui show lerpDouble;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/semantics.dart';
 
 import 'animation.dart';
 import 'curves.dart';
@@ -541,18 +540,6 @@ class AnimationController extends Animation<double>
   TickerFuture _animateToInternal(double target,
       {Duration? duration, Curve curve = Curves.linear}) {
     double scale = 1.0;
-    if (SemanticsBinding.instance!.disableAnimations) {
-      switch (animationBehavior) {
-        case AnimationBehavior.normal:
-          // Since the framework cannot handle zero duration animations, we run it at 5% of the normal
-          // duration to limit most animations to a single frame.
-          // TODO(jonahwilliams): determine a better process for setting duration.
-          scale = 0.05;
-          break;
-        case AnimationBehavior.preserve:
-          break;
-      }
-    }
     Duration? simulationDuration = duration;
     if (simulationDuration == null) {
       assert(() {
@@ -670,19 +657,6 @@ class AnimationController extends Animation<double>
         ? lowerBound - _kFlingTolerance.distance
         : upperBound + _kFlingTolerance.distance;
     double scale = 1.0;
-    final AnimationBehavior behavior =
-        animationBehavior ?? this.animationBehavior;
-    if (SemanticsBinding.instance!.disableAnimations) {
-      switch (behavior) {
-        case AnimationBehavior.normal:
-          // TODO(jonahwilliams): determine a better process for setting velocity.
-          // the value below was arbitrarily chosen because it worked for the drawer widget.
-          scale = 200.0;
-          break;
-        case AnimationBehavior.preserve:
-          break;
-      }
-    }
     final Simulation simulation = SpringSimulation(
         _kFlingSpringDescription, value, target, velocity * scale)
       ..tolerance = _kFlingTolerance;

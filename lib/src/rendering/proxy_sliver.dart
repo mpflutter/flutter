@@ -143,8 +143,6 @@ class RenderSliverOpacity extends RenderProxySliver {
     if (didNeedCompositing != alwaysNeedsCompositing)
       markNeedsCompositingBitsUpdate();
     markNeedsPaint();
-    if (wasVisible != (_alpha != 0) && !alwaysIncludeSemantics)
-      markNeedsSemanticsUpdate();
   }
 
   /// Whether child semantics are included regardless of the opacity.
@@ -157,7 +155,6 @@ class RenderSliverOpacity extends RenderProxySliver {
   set alwaysIncludeSemantics(bool value) {
     if (value == _alwaysIncludeSemantics) return;
     _alwaysIncludeSemantics = value;
-    markNeedsSemanticsUpdate();
   }
 
   @override
@@ -235,8 +232,6 @@ class RenderSliverIgnorePointer extends RenderProxySliver {
     assert(value != null);
     if (value == _ignoring) return;
     _ignoring = value;
-    if (_ignoringSemantics == null || !_ignoringSemantics!)
-      markNeedsSemanticsUpdate();
   }
 
   /// Whether the semantics of this render object is ignored when compiling the
@@ -251,8 +246,6 @@ class RenderSliverIgnorePointer extends RenderProxySliver {
     if (value == _ignoringSemantics) return;
     final bool oldEffectiveValue = _effectiveIgnoringSemantics;
     _ignoringSemantics = value;
-    if (oldEffectiveValue != _effectiveIgnoringSemantics)
-      markNeedsSemanticsUpdate();
   }
 
   bool get _effectiveIgnoringSemantics => ignoringSemantics ?? ignoring;

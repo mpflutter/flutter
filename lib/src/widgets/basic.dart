@@ -455,143 +455,6 @@ class BackdropFilter extends SingleChildRenderObjectWidget {
   }
 }
 
-/// A widget that provides a canvas on which to draw during the paint phase.
-///
-/// When asked to paint, [CustomPaint] first asks its [painter] to paint on the
-/// current canvas, then it paints its child, and then, after painting its
-/// child, it asks its [foregroundPainter] to paint. The coordinate system of the
-/// canvas matches the coordinate system of the [CustomPaint] object. The
-/// painters are expected to paint within a rectangle starting at the origin and
-/// encompassing a region of the given size. (If the painters paint outside
-/// those bounds, there might be insufficient memory allocated to rasterize the
-/// painting commands and the resulting behavior is undefined.) To enforce
-/// painting within those bounds, consider wrapping this [CustomPaint] with a
-/// [ClipRect] widget.
-///
-/// Painters are implemented by subclassing [CustomPainter].
-///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=kp14Y4uHpHs}
-///
-/// Because custom paint calls its painters during paint, you cannot call
-/// `setState` or `markNeedsLayout` during the callback (the layout for this
-/// frame has already happened).
-///
-/// Custom painters normally size themselves to their child. If they do not have
-/// a child, they attempt to size themselves to the [size], which defaults to
-/// [Size.zero]. [size] must not be null.
-///
-/// [isComplex] and [willChange] are hints to the compositor's raster cache
-/// and must not be null.
-///
-/// {@tool snippet}
-///
-/// This example shows how the sample custom painter shown at [CustomPainter]
-/// could be used in a [CustomPaint] widget to display a background to some
-/// text.
-///
-/// ```dart
-/// CustomPaint(
-///   painter: Sky(),
-///   child: Center(
-///     child: Text(
-///       'Once upon a time...',
-///       style: const TextStyle(
-///         fontSize: 40.0,
-///         fontWeight: FontWeight.w900,
-///         color: Color(0xFFFFFFFF),
-///       ),
-///     ),
-///   ),
-/// )
-/// ```
-/// {@end-tool}
-///
-/// See also:
-///
-///  * [CustomPainter], the class to extend when creating custom painters.
-///  * [Canvas], the class that a custom painter uses to paint.
-class CustomPaint extends SingleChildRenderObjectWidget {
-  /// Creates a widget that delegates its painting.
-  const CustomPaint({
-    Key? key,
-    this.painter,
-    this.foregroundPainter,
-    this.size = Size.zero,
-    this.isComplex = false,
-    this.willChange = false,
-    Widget? child,
-  })  : assert(size != null),
-        assert(isComplex != null),
-        assert(willChange != null),
-        assert(painter != null ||
-            foregroundPainter != null ||
-            (!isComplex && !willChange)),
-        super(key: key, child: child);
-
-  /// The painter that paints before the children.
-  final CustomPainter? painter;
-
-  /// The painter that paints after the children.
-  final CustomPainter? foregroundPainter;
-
-  /// The size that this [CustomPaint] should aim for, given the layout
-  /// constraints, if there is no child.
-  ///
-  /// Defaults to [Size.zero].
-  ///
-  /// If there's a child, this is ignored, and the size of the child is used
-  /// instead.
-  final Size size;
-
-  /// Whether the painting is complex enough to benefit from caching.
-  ///
-  /// The compositor contains a raster cache that holds bitmaps of layers in
-  /// order to avoid the cost of repeatedly rendering those layers on each
-  /// frame. If this flag is not set, then the compositor will apply its own
-  /// heuristics to decide whether the this layer is complex enough to benefit
-  /// from caching.
-  ///
-  /// This flag can't be set to true if both [painter] and [foregroundPainter]
-  /// are null because this flag will be ignored in such case.
-  final bool isComplex;
-
-  /// Whether the raster cache should be told that this painting is likely
-  /// to change in the next frame.
-  ///
-  /// This flag can't be set to true if both [painter] and [foregroundPainter]
-  /// are null because this flag will be ignored in such case.
-  final bool willChange;
-
-  @override
-  RenderCustomPaint createRenderObject(BuildContext context) {
-    return RenderCustomPaint(
-      painter: painter,
-      foregroundPainter: foregroundPainter,
-      preferredSize: size,
-      isComplex: isComplex,
-      willChange: willChange,
-    );
-  }
-
-  @override
-  void updateRenderObject(
-      BuildContext context, RenderCustomPaint renderObject) {
-    renderObject
-      ..painter = painter
-      ..foregroundPainter = foregroundPainter
-      ..preferredSize = size
-      ..isComplex = isComplex
-      ..willChange = willChange;
-  }
-
-  @override
-  void didUnmountRenderObject(RenderCustomPaint renderObject) {
-    renderObject
-      ..painter = null
-      ..foregroundPainter = null;
-  }
-}
-
 /// A widget that clips its child using a rectangle.
 ///
 /// By default, [ClipRect] prevents its child from painting outside its
@@ -7014,8 +6877,6 @@ class Semantics extends SingleChildRenderObjectWidget {
     String? onTapHint,
     String? onLongPressHint,
     TextDirection? textDirection,
-    SemanticsSortKey? sortKey,
-    SemanticsTag? tagForChildren,
     VoidCallback? onTap,
     VoidCallback? onLongPress,
     VoidCallback? onScrollLeft,
@@ -7028,72 +6889,14 @@ class Semantics extends SingleChildRenderObjectWidget {
     VoidCallback? onCut,
     VoidCallback? onPaste,
     VoidCallback? onDismiss,
-    MoveCursorHandler? onMoveCursorForwardByCharacter,
-    MoveCursorHandler? onMoveCursorBackwardByCharacter,
-    SetSelectionHandler? onSetSelection,
     VoidCallback? onDidGainAccessibilityFocus,
     VoidCallback? onDidLoseAccessibilityFocus,
-    Map<CustomSemanticsAction, VoidCallback>? customSemanticsActions,
   }) : this.fromProperties(
           key: key,
           child: child,
           container: container,
           explicitChildNodes: explicitChildNodes,
           excludeSemantics: excludeSemantics,
-          properties: SemanticsProperties(
-            enabled: enabled,
-            checked: checked,
-            toggled: toggled,
-            selected: selected,
-            button: button,
-            link: link,
-            header: header,
-            textField: textField,
-            readOnly: readOnly,
-            focusable: focusable,
-            focused: focused,
-            inMutuallyExclusiveGroup: inMutuallyExclusiveGroup,
-            obscured: obscured,
-            multiline: multiline,
-            scopesRoute: scopesRoute,
-            namesRoute: namesRoute,
-            hidden: hidden,
-            image: image,
-            liveRegion: liveRegion,
-            maxValueLength: maxValueLength,
-            currentValueLength: currentValueLength,
-            label: label,
-            value: value,
-            increasedValue: increasedValue,
-            decreasedValue: decreasedValue,
-            hint: hint,
-            textDirection: textDirection,
-            sortKey: sortKey,
-            onTap: onTap,
-            onLongPress: onLongPress,
-            onScrollLeft: onScrollLeft,
-            onScrollRight: onScrollRight,
-            onScrollUp: onScrollUp,
-            onScrollDown: onScrollDown,
-            onIncrease: onIncrease,
-            onDecrease: onDecrease,
-            onCopy: onCopy,
-            onCut: onCut,
-            onPaste: onPaste,
-            onMoveCursorForwardByCharacter: onMoveCursorForwardByCharacter,
-            onMoveCursorBackwardByCharacter: onMoveCursorBackwardByCharacter,
-            onDidGainAccessibilityFocus: onDidGainAccessibilityFocus,
-            onDidLoseAccessibilityFocus: onDidLoseAccessibilityFocus,
-            onDismiss: onDismiss,
-            onSetSelection: onSetSelection,
-            customSemanticsActions: customSemanticsActions,
-            hintOverrides: onTapHint != null || onLongPressHint != null
-                ? SemanticsHintOverrides(
-                    onTapHint: onTapHint,
-                    onLongPressHint: onLongPressHint,
-                  )
-                : null,
-          ),
         );
 
   /// Creates a semantic annotation using [SemanticsProperties].
@@ -7105,14 +6908,8 @@ class Semantics extends SingleChildRenderObjectWidget {
     this.container = false,
     this.explicitChildNodes = false,
     this.excludeSemantics = false,
-    required this.properties,
-  })   : assert(container != null),
-        assert(properties != null),
+  })  : assert(container != null),
         super(key: key, child: child);
-
-  /// Contains properties used by assistive technologies to make the application
-  /// more accessible.
-  final SemanticsProperties properties;
 
   /// If [container] is true, this widget will introduce a new
   /// node in the semantics tree. Otherwise, the semantics will be
@@ -7156,69 +6953,7 @@ class Semantics extends SingleChildRenderObjectWidget {
       container: container,
       explicitChildNodes: explicitChildNodes,
       excludeSemantics: excludeSemantics,
-      enabled: properties.enabled,
-      checked: properties.checked,
-      toggled: properties.toggled,
-      selected: properties.selected,
-      button: properties.button,
-      link: properties.link,
-      header: properties.header,
-      textField: properties.textField,
-      readOnly: properties.readOnly,
-      focusable: properties.focusable,
-      focused: properties.focused,
-      liveRegion: properties.liveRegion,
-      maxValueLength: properties.maxValueLength,
-      currentValueLength: properties.currentValueLength,
-      inMutuallyExclusiveGroup: properties.inMutuallyExclusiveGroup,
-      obscured: properties.obscured,
-      multiline: properties.multiline,
-      scopesRoute: properties.scopesRoute,
-      namesRoute: properties.namesRoute,
-      hidden: properties.hidden,
-      image: properties.image,
-      label: properties.label,
-      value: properties.value,
-      increasedValue: properties.increasedValue,
-      decreasedValue: properties.decreasedValue,
-      hint: properties.hint,
-      hintOverrides: properties.hintOverrides,
-      textDirection: _getTextDirection(context),
-      sortKey: properties.sortKey,
-      onTap: properties.onTap,
-      onLongPress: properties.onLongPress,
-      onScrollLeft: properties.onScrollLeft,
-      onScrollRight: properties.onScrollRight,
-      onScrollUp: properties.onScrollUp,
-      onScrollDown: properties.onScrollDown,
-      onIncrease: properties.onIncrease,
-      onDecrease: properties.onDecrease,
-      onCopy: properties.onCopy,
-      onDismiss: properties.onDismiss,
-      onCut: properties.onCut,
-      onPaste: properties.onPaste,
-      onMoveCursorForwardByCharacter: properties.onMoveCursorForwardByCharacter,
-      onMoveCursorBackwardByCharacter:
-          properties.onMoveCursorBackwardByCharacter,
-      onMoveCursorForwardByWord: properties.onMoveCursorForwardByWord,
-      onMoveCursorBackwardByWord: properties.onMoveCursorBackwardByWord,
-      onSetSelection: properties.onSetSelection,
-      onDidGainAccessibilityFocus: properties.onDidGainAccessibilityFocus,
-      onDidLoseAccessibilityFocus: properties.onDidLoseAccessibilityFocus,
-      customSemanticsActions: properties.customSemanticsActions,
     );
-  }
-
-  TextDirection? _getTextDirection(BuildContext context) {
-    if (properties.textDirection != null) return properties.textDirection;
-
-    final bool containsText = properties.label != null ||
-        properties.value != null ||
-        properties.hint != null;
-
-    if (!containsText) return null;
-
-    return Directionality.maybeOf(context);
   }
 
   @override
@@ -7229,9 +6964,6 @@ class Semantics extends SingleChildRenderObjectWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<bool>('container', container));
-    properties.add(DiagnosticsProperty<SemanticsProperties>(
-        'properties', this.properties));
-    this.properties.debugFillProperties(properties);
   }
 }
 
