@@ -1443,7 +1443,7 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       routing = Navigator(
         restorationScopeId: 'nav',
         key: _navigator,
-        initialRoute: _initialRouteName,
+        initialRoute: _initialRouteName.isNotEmpty ? _initialRouteName : "/",
         onGenerateRoute: _onGenerateRoute,
         onGenerateInitialRoutes: widget.onGenerateInitialRoutes == null
             ? Navigator.defaultGenerateInitialRoutes
@@ -1474,55 +1474,6 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
         child: result,
       );
     }
-
-    PerformanceOverlay? performanceOverlay;
-    // We need to push a performance overlay if any of the display or checkerboarding
-    // options are set.
-    if (widget.showPerformanceOverlay ||
-        WidgetsApp.showPerformanceOverlayOverride) {
-      performanceOverlay = PerformanceOverlay.allEnabled(
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
-      );
-    } else if (widget.checkerboardRasterCacheImages ||
-        widget.checkerboardOffscreenLayers) {
-      performanceOverlay = PerformanceOverlay(
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
-      );
-    }
-    if (performanceOverlay != null) {
-      result = Stack(
-        children: <Widget>[
-          result,
-          Positioned(
-              top: 0.0, left: 0.0, right: 0.0, child: performanceOverlay),
-        ],
-      );
-    }
-
-    if (widget.showSemanticsDebugger) {
-      result = SemanticsDebugger(
-        child: result,
-      );
-    }
-
-    assert(() {
-      if (widget.debugShowWidgetInspector ||
-          WidgetsApp.debugShowWidgetInspectorOverride) {
-        result = WidgetInspector(
-          child: result,
-          selectButtonBuilder: widget.inspectorSelectButtonBuilder,
-        );
-      }
-      if (widget.debugShowCheckedModeBanner &&
-          WidgetsApp.debugAllowBannerOverride) {
-        result = CheckedModeBanner(
-          child: result,
-        );
-      }
-      return true;
-    }());
 
     final Widget title;
     if (widget.onGenerateTitle != null) {

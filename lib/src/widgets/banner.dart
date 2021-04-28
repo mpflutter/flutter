@@ -306,7 +306,7 @@ class Banner extends StatelessWidget {
   Widget build(BuildContext context) {
     assert((textDirection != null && layoutDirection != null) ||
         debugCheckHasDirectionality(context));
-    return Container();
+    return child ?? Container();
   }
 
   @override

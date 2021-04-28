@@ -336,7 +336,7 @@ class _GlowingOverscrollIndicatorState extends State<GlowingOverscrollIndicator>
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return widget.child ?? Container();
   }
 }
 

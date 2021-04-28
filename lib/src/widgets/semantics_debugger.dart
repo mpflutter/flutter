@@ -95,7 +95,7 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger>
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return widget.child;
   }
 }
 
