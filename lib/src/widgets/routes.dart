@@ -18,7 +18,7 @@ import 'navigator.dart';
 import 'overlay.dart';
 import 'page_storage.dart';
 import 'primary_scroll_controller.dart';
-
+import 'restoration.dart';
 import 'scroll_controller.dart';
 import 'transitions.dart';
 
@@ -805,7 +805,10 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
       animation: widget.route.restorationScopeId,
       builder: (BuildContext context, Widget? child) {
         assert(child != null);
-        return child!;
+        return RestorationScope(
+          restorationId: widget.route.restorationScopeId.value,
+          child: child!,
+        );
       },
       child: _ModalScopeStatus(
         route: widget.route,

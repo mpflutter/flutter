@@ -85,6 +85,8 @@ export 'src/widgets/preferred_size.dart';
 export 'src/widgets/primary_scroll_controller.dart';
 export 'src/widgets/raw_keyboard_listener.dart';
 export 'src/widgets/reorderable_list.dart';
+export 'src/widgets/restoration.dart';
+export 'src/widgets/restoration_properties.dart';
 export 'src/widgets/router.dart';
 export 'src/widgets/routes.dart';
 export 'src/widgets/safe_area.dart';

@@ -19,7 +19,7 @@ import 'media_query.dart';
 import 'navigator.dart';
 import 'pages.dart';
 import 'performance_overlay.dart';
-
+import 'restoration.dart';
 import 'router.dart';
 import 'scrollable.dart';
 import 'semantics_debugger.dart';
@@ -1505,15 +1505,18 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
         : _locale!;
 
     assert(_debugCheckLocalizations(appLocale));
-    return Actions(
-      actions: widget.actions ?? WidgetsApp.defaultActions,
-      child: FocusTraversalGroup(
-        policy: ReadingOrderTraversalPolicy(),
-        child: _MediaQueryFromWindow(
-          child: Localizations(
-            locale: appLocale,
-            delegates: _localizationsDelegates.toList(),
-            child: title,
+    return RootRestorationScope(
+      restorationId: widget.restorationScopeId,
+      child: Actions(
+        actions: widget.actions ?? WidgetsApp.defaultActions,
+        child: FocusTraversalGroup(
+          policy: ReadingOrderTraversalPolicy(),
+          child: _MediaQueryFromWindow(
+            child: Localizations(
+              locale: appLocale,
+              delegates: _localizationsDelegates.toList(),
+              child: title,
+            ),
           ),
         ),
       ),
