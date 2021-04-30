@@ -41,6 +41,8 @@ class DeviceInfo {
 
   static WindowPadding windowPadding = (() {
     try {
+      final safeAreaTopHeight =
+          js.context['document']['body']['windowPaddingTop'];
       final safeAreaBottomHeight =
           js.context['document']['body']['windowPaddingBottom'];
       if (!(safeAreaBottomHeight is num) || safeAreaBottomHeight.isNaN) {
@@ -48,7 +50,7 @@ class DeviceInfo {
       }
       return MockWindowPadding(
         left: 0.0,
-        top: 0.0,
+        top: safeAreaTopHeight.toDouble(),
         right: 0.0,
         bottom: safeAreaBottomHeight.toDouble(),
       );
