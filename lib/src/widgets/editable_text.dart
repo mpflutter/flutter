@@ -1655,15 +1655,6 @@ class EditableTextState extends State<EditableText>
       newAutofillGroup?.register(this);
       _isInAutofillContext = _isInAutofillContext || _shouldBeInAutofillContext;
     }
-
-    if (!_didAutoFocus && widget.autofocus) {
-      _didAutoFocus = true;
-      SchedulerBinding.instance!.addPostFrameCallback((_) {
-        if (mounted) {
-          FocusScope.of(context).autofocus(widget.focusNode);
-        }
-      });
-    }
   }
 
   @override
