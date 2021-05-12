@@ -2,36 +2,64 @@
 part of dart.ui;
 
 class MockPaint implements Paint {
-  BlendMode get blendMode => BlendMode.clear;
+  BlendMode get blendMode => BlendMode.src;
   set blendMode(BlendMode value) {}
-  PaintingStyle get style => PaintingStyle.fill;
-  set style(PaintingStyle value) {}
-  double get strokeWidth => 0.0;
-  set strokeWidth(double value) {}
-  StrokeCap get strokeCap => StrokeCap.butt;
-  set strokeCap(StrokeCap value) {}
-  StrokeJoin get strokeJoin => StrokeJoin.round;
-  set strokeJoin(StrokeJoin value) {}
+
+  PaintingStyle _style = PaintingStyle.fill;
+  PaintingStyle get style => _style;
+  set style(PaintingStyle value) {
+    _style = value;
+  }
+
+  double _strokeWidth = 1.0;
+  double get strokeWidth => _strokeWidth;
+  set strokeWidth(double value) {
+    _strokeWidth = value;
+  }
+
+  StrokeCap _strokeCap = StrokeCap.butt;
+  StrokeCap get strokeCap => _strokeCap;
+  set strokeCap(StrokeCap value) {
+    _strokeCap = value;
+  }
+
+  StrokeJoin _strokeJoin = StrokeJoin.miter;
+  StrokeJoin get strokeJoin => _strokeJoin;
+  set strokeJoin(StrokeJoin value) {
+    _strokeJoin = value;
+  }
+
   bool get isAntiAlias => false;
   set isAntiAlias(bool value) {}
 
-  Color get color => Color(0);
-  set color(Color value) {}
-  bool get invertColors => false;
+  Color _color = Color(0);
+  Color get color => _color;
+  set color(Color value) {
+    _color = value;
+  }
 
+  bool get invertColors => false;
   set invertColors(bool value) {}
+
   Shader? get shader => null;
   set shader(Shader? value) {}
+
   MaskFilter? get maskFilter => null;
   set maskFilter(MaskFilter? value) {}
+
   // TODO(ianh): verify that the image drawing methods actually respect this
   FilterQuality get filterQuality => FilterQuality.low;
   set filterQuality(FilterQuality value) {}
+
   ColorFilter? get colorFilter => null;
   set colorFilter(ColorFilter? value) {}
 
-  double get strokeMiterLimit => 0.0;
-  set strokeMiterLimit(double value) {}
+  double _strokeMiterLimit = 0.0;
+  double get strokeMiterLimit => _strokeMiterLimit;
+  set strokeMiterLimit(double value) {
+    _strokeMiterLimit = value;
+  }
+
   ImageFilter? get imageFilter => null;
   set imageFilter(ImageFilter? value) {}
 }
