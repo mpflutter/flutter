@@ -10,5 +10,8 @@ class DeviceInfo {
   static double physicalSizeHeight = (isTaro ? 603.0 : 667.0) * 2.0;
   static double devicePixelRatio = 2.0;
   static WindowPadding windowPadding = WindowPadding.zero;
-  static void listenDeviceSizeChanged(Function callback) {}
+  static Function? deviceSizeChangeCallback;
+  static void listenDeviceSizeChanged(Function callback) {
+    deviceSizeChangeCallback = callback;
+  }
 }
