@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 // Synced 2019-05-30T14:20:57.841444.
 
-// @dart = 2.10
 part of dart.ui;
 
 typedef VoidCallback = void Function();

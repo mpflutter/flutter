@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart = 2.10
 part of dart.ui;
 
 class _StoredMessage {
@@ -56,7 +55,8 @@ class _RingBuffer<T> {
   }
 }
 
-typedef DrainChannelCallback = Future<void> Function(ByteData?, PlatformMessageResponseCallback);
+typedef DrainChannelCallback = Future<void> Function(
+    ByteData?, PlatformMessageResponseCallback);
 
 class ChannelBuffers {
   static const int kDefaultBufferSize = 1;
@@ -66,7 +66,8 @@ class ChannelBuffers {
       <String, _RingBuffer<_StoredMessage>?>{};
 
   _RingBuffer<_StoredMessage> _makeRingBuffer(int size) {
-    final _RingBuffer<_StoredMessage> result = _RingBuffer<_StoredMessage>(size);
+    final _RingBuffer<_StoredMessage> result =
+        _RingBuffer<_StoredMessage>(size);
     result.dropItemCallback = _onDropItem;
     return result;
   }
@@ -75,7 +76,8 @@ class ChannelBuffers {
     message.callback(null);
   }
 
-  bool push(String channel, ByteData? data, PlatformMessageResponseCallback callback) {
+  bool push(String channel, ByteData? data,
+      PlatformMessageResponseCallback callback) {
     _RingBuffer<_StoredMessage>? queue = _messages[channel];
     if (queue == null) {
       queue = _makeRingBuffer(kDefaultBufferSize);
@@ -87,9 +89,9 @@ class ChannelBuffers {
       // the buffer once that is available to users and print in all engine builds
       // after we verify that dropping messages isn't part of normal execution.
       _printDebug('Overflow on channel: $channel.  '
-                  'Messages on this channel are being discarded in FIFO fashion.  '
-                  'The engine may not be running or you need to adjust '
-                  'the buffer size if of the channel.');
+          'Messages on this channel are being discarded in FIFO fashion.  '
+          'The engine may not be running or you need to adjust '
+          'the buffer size if of the channel.');
     }
     return didOverflow;
   }
@@ -113,7 +115,8 @@ class ChannelBuffers {
     } else {
       final int numberOfDroppedMessages = queue.resize(newSize);
       if (numberOfDroppedMessages > 0) {
-        _Logger._printString('Dropping messages on channel "$channel" as a result of shrinking the buffer size.');
+        _Logger._printString(
+            'Dropping messages on channel "$channel" as a result of shrinking the buffer size.');
       }
     }
   }
@@ -127,16 +130,18 @@ class ChannelBuffers {
 
   String _getString(ByteData data) {
     final ByteBuffer buffer = data.buffer;
-    final Uint8List list = buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    final Uint8List list =
+        buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     return utf8.decode(list);
   }
 
   void handleMessage(ByteData data) {
     final List<String> command = _getString(data).split('\r');
-    if (command.length == /*arity=*/2 + 1 && command[0] == 'resize') {
+    if (command.length == /*arity=*/ 2 + 1 && command[0] == 'resize') {
       _resize(command[1], int.parse(command[2]));
     } else {
-      throw Exception('Unrecognized command $command sent to $kControlChannelName.');
+      throw Exception(
+          'Unrecognized command $command sent to $kControlChannelName.');
     }
   }
 }

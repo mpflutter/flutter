@@ -1,4 +1,3 @@
-// @dart = 2.10
 part of dart.ui;
 
 class MockParagraphBuilder implements ParagraphBuilder {

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart = 2.10
 part of dart.ui;
 
 enum PointerChange {
@@ -15,19 +14,9 @@ enum PointerChange {
   up,
 }
 
-enum PointerDeviceKind {
-  touch,
-  mouse,
-  stylus,
-  invertedStylus,
-  unknown
-}
+enum PointerDeviceKind { touch, mouse, stylus, invertedStylus, unknown }
 
-enum PointerSignalKind {
-  none,
-  scroll,
-  unknown
-}
+enum PointerSignalKind { none, scroll, unknown }
 
 class PointerData {
   const PointerData({
@@ -95,35 +84,35 @@ class PointerData {
   String toString() => 'PointerData(x: $physicalX, y: $physicalY)';
   String toStringFull() {
     return '$runtimeType('
-           'embedderId: $embedderId, '
-           'timeStamp: $timeStamp, '
-           'change: $change, '
-           'kind: $kind, '
-           'signalKind: $signalKind, '
-           'device: $device, '
-           'pointerIdentifier: $pointerIdentifier, '
-           'physicalX: $physicalX, '
-           'physicalY: $physicalY, '
-           'physicalDeltaX: $physicalDeltaX, '
-           'physicalDeltaY: $physicalDeltaY, '
-           'buttons: $buttons, '
-           'synthesized: $synthesized, '
-           'pressure: $pressure, '
-           'pressureMin: $pressureMin, '
-           'pressureMax: $pressureMax, '
-           'distance: $distance, '
-           'distanceMax: $distanceMax, '
-           'size: $size, '
-           'radiusMajor: $radiusMajor, '
-           'radiusMinor: $radiusMinor, '
-           'radiusMin: $radiusMin, '
-           'radiusMax: $radiusMax, '
-           'orientation: $orientation, '
-           'tilt: $tilt, '
-           'platformData: $platformData, '
-           'scrollDeltaX: $scrollDeltaX, '
-           'scrollDeltaY: $scrollDeltaY'
-           ')';
+        'embedderId: $embedderId, '
+        'timeStamp: $timeStamp, '
+        'change: $change, '
+        'kind: $kind, '
+        'signalKind: $signalKind, '
+        'device: $device, '
+        'pointerIdentifier: $pointerIdentifier, '
+        'physicalX: $physicalX, '
+        'physicalY: $physicalY, '
+        'physicalDeltaX: $physicalDeltaX, '
+        'physicalDeltaY: $physicalDeltaY, '
+        'buttons: $buttons, '
+        'synthesized: $synthesized, '
+        'pressure: $pressure, '
+        'pressureMin: $pressureMin, '
+        'pressureMax: $pressureMax, '
+        'distance: $distance, '
+        'distanceMax: $distanceMax, '
+        'size: $size, '
+        'radiusMajor: $radiusMajor, '
+        'radiusMinor: $radiusMinor, '
+        'radiusMin: $radiusMin, '
+        'radiusMax: $radiusMax, '
+        'orientation: $orientation, '
+        'tilt: $tilt, '
+        'platformData: $platformData, '
+        'scrollDeltaX: $scrollDeltaX, '
+        'scrollDeltaY: $scrollDeltaY'
+        ')';
   }
 }
 
