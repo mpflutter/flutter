@@ -72,7 +72,7 @@ class _MulticastCanvas implements Canvas {
   _MulticastCanvas({
     required Canvas main,
     required Canvas screenshot,
-  })   : assert(main != null),
+  })  : assert(main != null),
         assert(screenshot != null),
         _main = main,
         _screenshot = screenshot;
@@ -341,7 +341,7 @@ class _ScreenshotContainerLayer extends OffsetLayer {
 class _ScreenshotData {
   _ScreenshotData({
     required this.target,
-  })   : assert(target != null),
+  })  : assert(target != null),
         containerLayer = _ScreenshotContainerLayer();
 
   /// Target to take a screenshot of.
@@ -396,7 +396,7 @@ class _ScreenshotPaintingContext extends PaintingContext {
     required ContainerLayer containerLayer,
     required Rect estimatedBounds,
     required _ScreenshotData screenshotData,
-  })   : _data = screenshotData,
+  })  : _data = screenshotData,
         super(containerLayer, estimatedBounds);
 
   final _ScreenshotData _data;
@@ -2251,7 +2251,7 @@ class WidgetInspector extends StatefulWidget {
     Key? key,
     required this.child,
     required this.selectButtonBuilder,
-  })   : assert(child != null),
+  })  : assert(child != null),
         super(key: key);
 
   /// The widget that is being inspected.
@@ -2679,7 +2679,7 @@ class _InspectorOverlayLayer extends Layer {
     required this.overlayRect,
     required this.selection,
     required this.rootRenderObject,
-  })   : assert(overlayRect != null),
+  })  : assert(overlayRect != null),
         assert(selection != null) {
     bool inDebugMode = false;
     assert(() {

@@ -249,11 +249,11 @@ class SystemChannels {
   ///  * [SemanticsEvent] and its subclasses for a list of valid accessibility
   ///    events that can be sent over this channel.
   ///  * [SemanticsNode.sendEvent], which uses this channel to dispatch events.
-  static const BasicMessageChannel<dynamic> accessibility =
-      BasicMessageChannel<dynamic>(
-    'flutter/accessibility',
-    StandardMessageCodec(),
-  );
+  // static const BasicMessageChannel<dynamic> accessibility =
+  //     BasicMessageChannel<dynamic>(
+  //   'flutter/accessibility',
+  //   StandardMessageCodec(),
+  // );
 
   /// A [MethodChannel] for controlling platform views.
   ///

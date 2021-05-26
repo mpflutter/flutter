@@ -1028,12 +1028,6 @@ class FocusNode with DiagnosticableTreeMixin, ChangeNotifier {
       // Update the focus chain for the current focus without changing it.
       _manager?.primaryFocus?._setAsFocusedChildForScope();
     }
-    if (oldScope != null &&
-        child.context != null &&
-        child.enclosingScope != oldScope) {
-      FocusTraversalGroup.maybeOf(child.context!)
-          ?.changedScope(node: child, oldScope: oldScope);
-    }
     if (child._requestFocusWhenReparented) {
       child._doRequestFocus(findFirstFocus: true);
       child._requestFocusWhenReparented = false;
@@ -1179,20 +1173,19 @@ class FocusNode with DiagnosticableTreeMixin, ChangeNotifier {
   /// [FocusTraversalPolicy.next] method.
   ///
   /// Returns true if it successfully found a node and requested focus.
-  bool nextFocus() => FocusTraversalGroup.of(context!).next(this);
+  bool nextFocus() => false;
 
   /// Request to move the focus to the previous focus node, by calling the
   /// [FocusTraversalPolicy.previous] method.
   ///
   /// Returns true if it successfully found a node and requested focus.
-  bool previousFocus() => FocusTraversalGroup.of(context!).previous(this);
+  bool previousFocus() => false;
 
   /// Request to move the focus to the nearest focus node in the given
   /// direction, by calling the [FocusTraversalPolicy.inDirection] method.
   ///
   /// Returns true if it successfully found a node and requested focus.
-  bool focusInDirection(TraversalDirection direction) =>
-      FocusTraversalGroup.of(context!).inDirection(this, direction);
+  bool focusInDirection(dynamic direction) => false;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

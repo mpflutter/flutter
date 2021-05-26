@@ -64,7 +64,7 @@ const int _kObscureShowLatestCharCursorTicks = 3;
 /// A map used to disable scrolling shortcuts in text fields.
 ///
 /// This is a temporary fix for: https://github.com/flutter/flutter/issues/74191
-final Map<dynamic, Intent> scrollShortcutOverrides = <dynamic, Intent>{};
+// final Map<dynamic, Intent> scrollShortcutOverrides = <dynamic, Intent>{};
 
 /// A controller for an editable text field.
 ///
@@ -2831,7 +2831,7 @@ class _Editable extends LeafRenderObjectWidget {
     this.promptRectRange,
     this.promptRectColor,
     required this.clipBehavior,
-  })   : assert(textDirection != null),
+  })  : assert(textDirection != null),
         assert(rendererIgnoresPointer != null),
         super(key: key);
 

@@ -309,35 +309,7 @@ class Scrollable extends StatefulWidget {
     ScrollPositionAlignmentPolicy alignmentPolicy =
         ScrollPositionAlignmentPolicy.explicit,
   }) {
-    final List<Future<void>> futures = <Future<void>>[];
-
-    // The `targetRenderObject` is used to record the first target renderObject.
-    // If there are multiple scrollable widgets nested, we should let
-    // the `targetRenderObject` as visible as possible to improve the user experience.
-    // Otherwise, let the outer renderObject as visible as possible maybe cause
-    // the `targetRenderObject` invisible.
-    // Also see https://github.com/flutter/flutter/issues/65100
-    RenderObject? targetRenderObject;
-    ScrollableState? scrollable = Scrollable.of(context);
-    while (scrollable != null) {
-      futures.add(scrollable.position.ensureVisible(
-        context.findRenderObject()!,
-        alignment: alignment,
-        duration: duration,
-        curve: curve,
-        alignmentPolicy: alignmentPolicy,
-        targetRenderObject: targetRenderObject,
-      ));
-
-      targetRenderObject = targetRenderObject ?? context.findRenderObject();
-      context = scrollable.context;
-      scrollable = Scrollable.of(context);
-    }
-
-    if (futures.isEmpty || duration == Duration.zero)
-      return Future<void>.value();
-    if (futures.length == 1) return futures.single;
-    return Future.wait<void>(futures).then<void>((List<void> _) => null);
+    return Future.wait<void>([]).then<void>((List<void> _) => null);
   }
 }
 
@@ -349,7 +321,7 @@ class _ScrollableScope extends InheritedWidget {
     required this.scrollable,
     required this.position,
     required Widget child,
-  })   : assert(scrollable != null),
+  })  : assert(scrollable != null),
         assert(child != null),
         super(key: key, child: child);
 
@@ -393,27 +365,7 @@ class ScrollableState extends State<Scrollable>
   ScrollPhysics? _physics;
 
   // Only call this from places that will definitely trigger a rebuild.
-  void _updatePosition() {
-    _configuration = ScrollConfiguration.of(context);
-    _physics = _configuration.getScrollPhysics(context);
-    if (widget.physics != null) _physics = widget.physics!.applyTo(_physics);
-    final ScrollController? controller = widget.controller;
-    final ScrollPosition? oldPosition = _position;
-    if (oldPosition != null) {
-      controller?.detach(oldPosition);
-      // It's important that we not dispose the old position until after the
-      // viewport has had a chance to unregister its listeners from the old
-      // position. So, schedule a microtask to do it.
-      scheduleMicrotask(oldPosition.dispose);
-    }
-
-    _position =
-        controller?.createScrollPosition(_physics!, this, oldPosition) ??
-            ScrollPositionWithSingleContext(
-                physics: _physics!, context: this, oldPosition: oldPosition);
-    assert(_position != null);
-    controller?.attach(position);
-  }
+  void _updatePosition() {}
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -441,15 +393,7 @@ class ScrollableState extends State<Scrollable>
   }
 
   bool _shouldUpdatePosition(Scrollable oldWidget) {
-    ScrollPhysics? newPhysics = widget.physics;
-    ScrollPhysics? oldPhysics = oldWidget.physics;
-    do {
-      if (newPhysics?.runtimeType != oldPhysics?.runtimeType) return true;
-      newPhysics = newPhysics?.parent;
-      oldPhysics = oldPhysics?.parent;
-    } while (newPhysics != null || oldPhysics != null);
-
-    return widget.controller?.runtimeType != oldWidget.controller?.runtimeType;
+    return false;
   }
 
   @override
@@ -492,85 +436,14 @@ class ScrollableState extends State<Scrollable>
 
   @override
   @protected
-  void setCanDrag(bool canDrag) {
-    if (canDrag == _lastCanDrag &&
-        (!canDrag || widget.axis == _lastAxisDirection)) return;
-    if (!canDrag) {
-      _gestureRecognizers = const <Type, GestureRecognizerFactory>{};
-      // Cancel the active hold/drag (if any) because the gesture recognizers
-      // will soon be disposed by our RawGestureDetector, and we won't be
-      // receiving pointer up events to cancel the hold/drag.
-      _handleDragCancel();
-    } else {
-      switch (widget.axis) {
-        case Axis.vertical:
-          _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-                VerticalDragGestureRecognizer>(
-              () => VerticalDragGestureRecognizer(),
-              (VerticalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = _handleDragDown
-                  ..onStart = _handleDragStart
-                  ..onUpdate = _handleDragUpdate
-                  ..onEnd = _handleDragEnd
-                  ..onCancel = _handleDragCancel
-                  ..minFlingDistance = _physics?.minFlingDistance
-                  ..minFlingVelocity = _physics?.minFlingVelocity
-                  ..maxFlingVelocity = _physics?.maxFlingVelocity
-                  ..velocityTrackerBuilder =
-                      _configuration.velocityTrackerBuilder(context)
-                  ..dragStartBehavior = widget.dragStartBehavior;
-              },
-            ),
-          };
-          break;
-        case Axis.horizontal:
-          _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            HorizontalDragGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<
-                    HorizontalDragGestureRecognizer>(
-              () => HorizontalDragGestureRecognizer(),
-              (HorizontalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = _handleDragDown
-                  ..onStart = _handleDragStart
-                  ..onUpdate = _handleDragUpdate
-                  ..onEnd = _handleDragEnd
-                  ..onCancel = _handleDragCancel
-                  ..minFlingDistance = _physics?.minFlingDistance
-                  ..minFlingVelocity = _physics?.minFlingVelocity
-                  ..maxFlingVelocity = _physics?.maxFlingVelocity
-                  ..velocityTrackerBuilder =
-                      _configuration.velocityTrackerBuilder(context)
-                  ..dragStartBehavior = widget.dragStartBehavior;
-              },
-            ),
-          };
-          break;
-      }
-    }
-    _lastCanDrag = canDrag;
-    _lastAxisDirection = widget.axis;
-    if (_gestureDetectorKey.currentState != null)
-      _gestureDetectorKey.currentState!
-          .replaceGestureRecognizers(_gestureRecognizers);
-  }
+  void setCanDrag(bool canDrag) {}
 
   @override
   TickerProvider get vsync => this;
 
   @override
   @protected
-  void setIgnorePointer(bool value) {
-    if (_shouldIgnorePointer == value) return;
-    _shouldIgnorePointer = value;
-    if (_ignorePointerKey.currentContext != null) {
-      final RenderIgnorePointer renderBox = _ignorePointerKey.currentContext!
-          .findRenderObject()! as RenderIgnorePointer;
-      renderBox.ignoring = _shouldIgnorePointer;
-    }
-  }
+  void setIgnorePointer(bool value) {}
 
   @override
   BuildContext? get notificationContext => _gestureDetectorKey.currentContext;
@@ -694,36 +567,8 @@ class ScrollableState extends State<Scrollable>
     Widget result = _ScrollableScope(
       scrollable: this,
       position: position,
-      // TODO(ianh): Having all these global keys is sad.
-      child: Listener(
-        onPointerSignal: _receivedPointerSignal,
-        child: RawGestureDetector(
-          key: _gestureDetectorKey,
-          gestures: _gestureRecognizers,
-          behavior: HitTestBehavior.opaque,
-          excludeFromSemantics: widget.excludeFromSemantics,
-          child: Semantics(
-            explicitChildNodes: !widget.excludeFromSemantics,
-            child: IgnorePointer(
-              key: _ignorePointerKey,
-              ignoring: _shouldIgnorePointer,
-              ignoringSemantics: false,
-              child: widget.viewportBuilder(context, position),
-            ),
-          ),
-        ),
-      ),
+      child: widget.viewportBuilder(context, position),
     );
-
-    if (!widget.excludeFromSemantics) {
-      result = _ScrollSemantics(
-        key: _scrollSemanticsKey,
-        child: result,
-        position: position,
-        allowImplicitScrolling: _physics!.allowImplicitScrolling,
-        semanticChildCount: widget.semanticChildCount,
-      );
-    }
 
     return _configuration.buildViewportChrome(
         context, result, widget.axisDirection);
@@ -884,7 +729,7 @@ class ScrollIncrementDetails {
   const ScrollIncrementDetails({
     required this.type,
     required this.metrics,
-  })   : assert(type != null),
+  })  : assert(type != null),
         assert(metrics != null);
 
   /// The type of scroll this is (e.g. line, page, etc.).
@@ -894,180 +739,6 @@ class ScrollIncrementDetails {
 
   /// The current metrics of the scrollable that is being scrolled.
   final ScrollMetrics metrics;
-}
-
-/// An [Intent] that represents scrolling the nearest scrollable by an amount
-/// appropriate for the [type] specified.
-///
-/// The actual amount of the scroll is determined by the
-/// [Scrollable.incrementCalculator], or by its defaults if that is not
-/// specified.
-class ScrollIntent extends Intent {
-  /// Creates a const [ScrollIntent] that requests scrolling in the given
-  /// [direction], with the given [type].
-  const ScrollIntent({
-    required this.direction,
-    this.type = ScrollIncrementType.line,
-  })  : assert(direction != null),
-        assert(type != null);
-
-  /// The direction in which to scroll the scrollable containing the focused
-  /// widget.
-  final AxisDirection direction;
-
-  /// The type of scrolling that is intended.
-  final ScrollIncrementType type;
-}
-
-/// An [Action] that scrolls the [Scrollable] that encloses the current
-/// [primaryFocus] by the amount configured in the [ScrollIntent] given to it.
-///
-/// If a Scrollable cannot be found above the current [primaryFocus], the
-/// [PrimaryScrollController] will be considered for default handling of
-/// [ScrollAction]s.
-///
-/// If [Scrollable.incrementCalculator] is null for the scrollable, the default
-/// for a [ScrollIntent.type] set to [ScrollIncrementType.page] is 80% of the
-/// size of the scroll window, and for [ScrollIncrementType.line], 50 logical
-/// pixels.
-class ScrollAction extends Action<ScrollIntent> {
-  @override
-  bool isEnabled(ScrollIntent intent) {
-    final FocusNode? focus = primaryFocus;
-    final bool contextIsValid = focus != null && focus.context != null;
-    if (contextIsValid) {
-      // Check for primary scrollable within the current context
-      if (Scrollable.of(focus.context!) != null) return true;
-      // Check for fallback scrollable with context from PrimaryScrollController
-      if (PrimaryScrollController.of(focus.context!) != null) {
-        final ScrollController? primaryScrollController =
-            PrimaryScrollController.of(focus.context!);
-        return primaryScrollController != null &&
-            primaryScrollController.hasClients &&
-            primaryScrollController.position.context.notificationContext !=
-                null &&
-            Scrollable.of(primaryScrollController
-                    .position.context.notificationContext!) !=
-                null;
-      }
-    }
-    return false;
-  }
-
-  // Returns the scroll increment for a single scroll request, for use when
-  // scrolling using a hardware keyboard.
-  //
-  // Must not be called when the position is null, or when any of the position
-  // metrics (pixels, viewportDimension, maxScrollExtent, minScrollExtent) are
-  // null. The type and state arguments must not be null, and the widget must
-  // have already been laid out so that the position fields are valid.
-  double _calculateScrollIncrement(ScrollableState state,
-      {ScrollIncrementType type = ScrollIncrementType.line}) {
-    assert(type != null);
-    assert(state.position != null);
-    assert(state.position.hasPixels);
-    assert(state.position.viewportDimension != null);
-    assert(state.position.maxScrollExtent != null);
-    assert(state.position.minScrollExtent != null);
-    assert(state._physics == null ||
-        state._physics!.shouldAcceptUserOffset(state.position));
-    if (state.widget.incrementCalculator != null) {
-      return state.widget.incrementCalculator!(
-        ScrollIncrementDetails(
-          type: type,
-          metrics: state.position,
-        ),
-      );
-    }
-    switch (type) {
-      case ScrollIncrementType.line:
-        return 50.0;
-      case ScrollIncrementType.page:
-        return 0.8 * state.position.viewportDimension;
-    }
-  }
-
-  // Find out how much of an increment to move by, taking the different
-  // directions into account.
-  double _getIncrement(ScrollableState state, ScrollIntent intent) {
-    final double increment =
-        _calculateScrollIncrement(state, type: intent.type);
-    switch (intent.direction) {
-      case AxisDirection.down:
-        switch (state.axisDirection) {
-          case AxisDirection.up:
-            return -increment;
-          case AxisDirection.down:
-            return increment;
-          case AxisDirection.right:
-          case AxisDirection.left:
-            return 0.0;
-        }
-      case AxisDirection.up:
-        switch (state.axisDirection) {
-          case AxisDirection.up:
-            return increment;
-          case AxisDirection.down:
-            return -increment;
-          case AxisDirection.right:
-          case AxisDirection.left:
-            return 0.0;
-        }
-      case AxisDirection.left:
-        switch (state.axisDirection) {
-          case AxisDirection.right:
-            return -increment;
-          case AxisDirection.left:
-            return increment;
-          case AxisDirection.up:
-          case AxisDirection.down:
-            return 0.0;
-        }
-      case AxisDirection.right:
-        switch (state.axisDirection) {
-          case AxisDirection.right:
-            return increment;
-          case AxisDirection.left:
-            return -increment;
-          case AxisDirection.up:
-          case AxisDirection.down:
-            return 0.0;
-        }
-    }
-  }
-
-  @override
-  void invoke(ScrollIntent intent) {
-    ScrollableState? state = Scrollable.of(primaryFocus!.context!);
-    if (state == null) {
-      final ScrollController? primaryScrollController =
-          PrimaryScrollController.of(primaryFocus!.context!);
-      state = Scrollable.of(
-          primaryScrollController!.position.context.notificationContext!);
-    }
-    assert(state != null,
-        '$ScrollAction was invoked on a context that has no scrollable parent');
-    assert(state!.position.hasPixels,
-        'Scrollable must be laid out before it can be scrolled via a ScrollAction');
-    assert(state!.position.viewportDimension != null);
-    assert(state!.position.maxScrollExtent != null);
-    assert(state!.position.minScrollExtent != null);
-
-    // Don't do anything if the user isn't allowed to scroll.
-    if (state!._physics != null &&
-        !state._physics!.shouldAcceptUserOffset(state.position)) {
-      return;
-    }
-    final double increment = _getIncrement(state, intent);
-    if (increment == 0.0) {
-      return;
-    }
-    state.position.moveTo(
-      state.position.pixels + increment,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.easeInOut,
-    );
-  }
 }
 
 // Not using a RestorableDouble because we want to allow null values and override

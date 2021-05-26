@@ -302,7 +302,7 @@ mixin WidgetsBinding
     buildOwner!.onBuildScheduled = _handleBuildScheduled;
     window.onLocaleChanged = handleLocaleChanged;
     SystemChannels.navigation.setMethodCallHandler(_handleNavigationInvocation);
-    FlutterErrorDetails.propertiesTransformers.add(transformDebugCreator);
+    // FlutterErrorDetails.propertiesTransformers.add(transformDebugCreator);
   }
 
   void _debugAddStackFilters() {
@@ -518,19 +518,19 @@ mixin WidgetsBinding
 
       // This service extension is deprecated and will be removed by 12/1/2018.
       // Use ext.flutter.inspector.show instead.
-      registerBoolServiceExtension(
-        name: 'debugWidgetInspector',
-        getter: () async => WidgetsApp.debugShowWidgetInspectorOverride,
-        setter: (bool value) {
-          if (WidgetsApp.debugShowWidgetInspectorOverride == value)
-            return Future<void>.value();
-          WidgetsApp.debugShowWidgetInspectorOverride = value;
-          return _forceRebuild();
-        },
-      );
+      // registerBoolServiceExtension(
+      //   name: 'debugWidgetInspector',
+      //   getter: () async => WidgetsApp.debugShowWidgetInspectorOverride,
+      //   setter: (bool value) {
+      //     if (WidgetsApp.debugShowWidgetInspectorOverride == value)
+      //       return Future<void>.value();
+      //     WidgetsApp.debugShowWidgetInspectorOverride = value;
+      //     return _forceRebuild();
+      //   },
+      // );
 
-      WidgetInspectorService.instance
-          .initServiceExtensions(registerServiceExtension);
+      // WidgetInspectorService.instance
+      //     .initServiceExtensions(registerServiceExtension);
 
       return true;
     }());
@@ -974,10 +974,10 @@ mixin WidgetsBinding
 
   @override
   Future<void> performReassemble() {
-    assert(() {
-      WidgetInspectorService.instance.performReassemble();
-      return true;
-    }());
+    // assert(() {
+    //   WidgetInspectorService.instance.performReassemble();
+    //   return true;
+    // }());
 
     if (renderViewElement != null) buildOwner!.reassemble(renderViewElement!);
     return super.performReassemble();

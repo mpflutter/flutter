@@ -198,9 +198,9 @@ class WidgetsApp extends StatefulWidget {
     this.showSemanticsDebugger = false,
     this.debugShowWidgetInspector = false,
     this.debugShowCheckedModeBanner = true,
-    this.inspectorSelectButtonBuilder,
-    this.shortcuts,
-    this.actions,
+    // this.inspectorSelectButtonBuilder,
+    // this.shortcuts,
+    // this.actions,
     this.restorationScopeId,
   })  : assert(navigatorObservers != null),
         assert(routes != null),
@@ -286,9 +286,9 @@ class WidgetsApp extends StatefulWidget {
     this.showSemanticsDebugger = false,
     this.debugShowWidgetInspector = false,
     this.debugShowCheckedModeBanner = true,
-    this.inspectorSelectButtonBuilder,
-    this.shortcuts,
-    this.actions,
+    // this.inspectorSelectButtonBuilder,
+    // this.shortcuts,
+    // this.actions,
     this.restorationScopeId,
   })  : assert(routeInformationParser != null && routerDelegate != null,
             'The routeInformationParser and routerDelegate cannot be null.'),
@@ -833,7 +833,7 @@ class WidgetsApp extends StatefulWidget {
   /// This lets [MaterialApp] to use a material button to toggle the inspector
   /// select mode without requiring [WidgetInspector] to depend on the
   /// material package.
-  final InspectorSelectButtonBuilder? inspectorSelectButtonBuilder;
+  // final InspectorSelectButtonBuilder? inspectorSelectButtonBuilder;
 
   /// {@template flutter.widgets.widgetsApp.debugShowCheckedModeBanner}
   /// Turns on a little "DEBUG" banner in checked mode to indicate
@@ -893,7 +893,7 @@ class WidgetsApp extends StatefulWidget {
   ///  * The [Intent] and [Action] classes, which allow definition of new
   ///    actions.
   /// {@endtemplate}
-  final Map<dynamic, Intent>? shortcuts;
+  // final Map<dynamic, Intent>? shortcuts;
 
   /// {@template flutter.widgets.widgetsApp.actions}
   /// The default map of intent keys to actions for the application.
@@ -947,7 +947,7 @@ class WidgetsApp extends StatefulWidget {
   ///  * The [Intent] and [Action] classes, which allow definition of new
   ///    actions.
   /// {@endtemplate}
-  final Map<Type, Action<Intent>>? actions;
+  // final Map<Type, Action<Intent>>? actions;
 
   /// {@template flutter.widgets.widgetsApp.restorationScopeId}
   /// The identifier to use for state restoration of this app.
@@ -990,30 +990,30 @@ class WidgetsApp extends StatefulWidget {
   /// with "s".
   static bool debugAllowBannerOverride = true;
 
-  static final Map<dynamic, Intent> _defaultShortcuts = <dynamic, Intent>{};
+  // static final Map<dynamic, Intent> _defaultShortcuts = <dynamic, Intent>{};
 
-  // Default shortcuts for the web platform.
-  static final Map<dynamic, Intent> _defaultWebShortcuts = <dynamic, Intent>{};
+  // // Default shortcuts for the web platform.
+  // static final Map<dynamic, Intent> _defaultWebShortcuts = <dynamic, Intent>{};
 
   /// Generates the default shortcut key bindings based on the
   /// [defaultTargetPlatform].
   ///
   /// Used by [WidgetsApp] to assign a default value to [WidgetsApp.shortcuts].
-  static Map<dynamic, Intent> get defaultShortcuts {
-    return _defaultWebShortcuts;
-  }
+  // static Map<dynamic, Intent> get defaultShortcuts {
+  //   return _defaultWebShortcuts;
+  // }
 
   /// The default value of [WidgetsApp.actions].
-  static Map<Type, Action<Intent>> defaultActions = <Type, Action<Intent>>{
-    DoNothingIntent: DoNothingAction(),
-    DoNothingAndStopPropagationIntent: DoNothingAction(consumesKey: false),
-    RequestFocusIntent: RequestFocusAction(),
-    NextFocusIntent: NextFocusAction(),
-    PreviousFocusIntent: PreviousFocusAction(),
-    DirectionalFocusIntent: DirectionalFocusAction(),
-    ScrollIntent: ScrollAction(),
-    PrioritizedIntents: PrioritizedAction(),
-  };
+  // static Map<Type, Action<Intent>> defaultActions = <Type, Action<Intent>>{
+  //   DoNothingIntent: DoNothingAction(),
+  //   DoNothingAndStopPropagationIntent: DoNothingAction(consumesKey: false),
+  //   RequestFocusIntent: RequestFocusAction(),
+  //   NextFocusIntent: NextFocusAction(),
+  //   PreviousFocusIntent: PreviousFocusAction(),
+  //   DirectionalFocusIntent: DirectionalFocusAction(),
+  //   ScrollIntent: ScrollAction(),
+  //   PrioritizedIntents: PrioritizedAction(),
+  // };
 
   @override
   _WidgetsAppState createState() => _WidgetsAppState();
@@ -1500,25 +1500,10 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       );
     }
 
-    final Locale appLocale = widget.locale != null
-        ? _resolveLocales(<Locale>[widget.locale!], widget.supportedLocales)
-        : _locale!;
-
-    assert(_debugCheckLocalizations(appLocale));
     return RootRestorationScope(
       restorationId: widget.restorationScopeId,
-      child: Actions(
-        actions: widget.actions ?? WidgetsApp.defaultActions,
-        child: FocusTraversalGroup(
-          policy: ReadingOrderTraversalPolicy(),
-          child: _MediaQueryFromWindow(
-            child: Localizations(
-              locale: appLocale,
-              delegates: _localizationsDelegates.toList(),
-              child: title,
-            ),
-          ),
-        ),
+      child: _MediaQueryFromWindow(
+        child: title,
       ),
     );
   }

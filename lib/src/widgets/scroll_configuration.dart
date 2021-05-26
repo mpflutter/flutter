@@ -31,23 +31,9 @@ class ScrollBehavior {
   /// For example, on Android, this method wraps the given widget with a
   /// [GlowingOverscrollIndicator] to provide visual feedback when the user
   /// overscrolls.
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
-    // When modifying this function, consider modifying the implementation in
-    // _MaterialScrollBehavior as well.
-    switch (getPlatform(context)) {
-      case TargetPlatform.iOS:
-      case TargetPlatform.linux:
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-        return child;
-      case TargetPlatform.android:
-      case TargetPlatform.fuchsia:
-        return GlowingOverscrollIndicator(
-          child: child,
-          axisDirection: axisDirection,
-          color: _kDefaultGlowColor,
-        );
-    }
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 
   /// Specifies the type of velocity tracker to use in the descendant
@@ -70,7 +56,8 @@ class ScrollBehavior {
     switch (getPlatform(context)) {
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
-        return (PointerEvent event) => IOSScrollViewFlingVelocityTracker(event.kind);
+        return (PointerEvent event) =>
+            IOSScrollViewFlingVelocityTracker(event.kind);
       case TargetPlatform.android:
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
@@ -79,8 +66,10 @@ class ScrollBehavior {
     }
   }
 
-  static const ScrollPhysics _bouncingPhysics = BouncingScrollPhysics(parent: RangeMaintainingScrollPhysics());
-  static const ScrollPhysics _clampingPhysics = ClampingScrollPhysics(parent: RangeMaintainingScrollPhysics());
+  static const ScrollPhysics _bouncingPhysics =
+      BouncingScrollPhysics(parent: RangeMaintainingScrollPhysics());
+  static const ScrollPhysics _clampingPhysics =
+      ClampingScrollPhysics(parent: RangeMaintainingScrollPhysics());
 
   /// The scroll physics to use for the platform given by [getPlatform].
   ///
@@ -138,15 +127,17 @@ class ScrollConfiguration extends InheritedWidget {
   /// If no [ScrollConfiguration] widget is in scope of the given `context`,
   /// a default [ScrollBehavior] instance is returned.
   static ScrollBehavior of(BuildContext context) {
-    final ScrollConfiguration? configuration = context.dependOnInheritedWidgetOfExactType<ScrollConfiguration>();
+    final ScrollConfiguration? configuration =
+        context.dependOnInheritedWidgetOfExactType<ScrollConfiguration>();
     return configuration?.behavior ?? const ScrollBehavior();
   }
 
   @override
   bool updateShouldNotify(ScrollConfiguration oldWidget) {
     assert(behavior != null);
-    return behavior.runtimeType != oldWidget.behavior.runtimeType
-        || (behavior != oldWidget.behavior && behavior.shouldNotify(oldWidget.behavior));
+    return behavior.runtimeType != oldWidget.behavior.runtimeType ||
+        (behavior != oldWidget.behavior &&
+            behavior.shouldNotify(oldWidget.behavior));
   }
 
   @override

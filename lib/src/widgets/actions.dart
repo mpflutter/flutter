@@ -355,7 +355,7 @@ class ActionListener extends StatefulWidget {
     required this.listener,
     required this.action,
     required this.child,
-  })   : assert(listener != null),
+  })  : assert(listener != null),
         assert(action != null),
         assert(child != null),
         super(key: key);
@@ -708,7 +708,7 @@ class Actions extends StatefulWidget {
     this.dispatcher,
     required this.actions,
     required this.child,
-  })   : assert(actions != null),
+  })  : assert(actions != null),
         assert(child != null),
         super(key: key);
 
@@ -1087,7 +1087,7 @@ class _ActionsMarker extends InheritedWidget {
     required this.rebuildKey,
     Key? key,
     required Widget child,
-  })   : assert(child != null),
+  })  : assert(child != null),
         assert(actions != null),
         super(key: key, child: child);
 
@@ -1269,7 +1269,7 @@ class FocusableActionDetector extends StatefulWidget {
     this.onFocusChange,
     this.mouseCursor = MouseCursor.defer,
     required this.child,
-  })   : assert(enabled != null),
+  })  : assert(enabled != null),
         assert(autofocus != null),
         assert(mouseCursor != null),
         assert(child != null),
