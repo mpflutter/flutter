@@ -362,10 +362,16 @@ class ScrollableState extends State<Scrollable>
   AxisDirection get axisDirection => widget.axisDirection;
 
   late ScrollBehavior _configuration;
-  ScrollPhysics? _physics;
+  ScrollPhysics? _physics = BouncingScrollPhysics();
 
   // Only call this from places that will definitely trigger a rebuild.
-  void _updatePosition() {}
+  void _updatePosition() {
+    _configuration = ScrollConfiguration.of(context);
+    _position = ScrollPositionWithSingleContext(
+      physics: _physics!,
+      context: this,
+    );
+  }
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {

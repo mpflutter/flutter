@@ -966,17 +966,6 @@ class RestorationBucket {
 /// Should only be called from within asserts. Always returns false outside
 /// of debug builds.
 bool debugIsSerializableForRestoration(Object? object) {
-  bool result = false;
-
-  // assert(() {
-  //   try {
-  //     const StandardMessageCodec().encodeMessage(object);
-  //     result = true;
-  //   } catch (_) {
-  //     result = false;
-  //   }
-  //   return true;
-  // }());
-
+  bool result = true;
   return result;
 }
