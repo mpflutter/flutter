@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 
 import 'basic.dart';
+import 'container.dart';
 import 'framework.dart';
 
 export 'package:flutter/gestures.dart'
@@ -769,176 +770,7 @@ class GestureDetector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<Type, GestureRecognizerFactory> gestures =
-        <Type, GestureRecognizerFactory>{};
-
-    if (onTapDown != null ||
-        onTapUp != null ||
-        onTap != null ||
-        onTapCancel != null ||
-        onSecondaryTap != null ||
-        onSecondaryTapDown != null ||
-        onSecondaryTapUp != null ||
-        onSecondaryTapCancel != null ||
-        onTertiaryTapDown != null ||
-        onTertiaryTapUp != null ||
-        onTertiaryTapCancel != null) {
-      gestures[TapGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-        () => TapGestureRecognizer(debugOwner: this),
-        (TapGestureRecognizer instance) {
-          instance
-            ..onTapDown = onTapDown
-            ..onTapUp = onTapUp
-            ..onTap = onTap
-            ..onTapCancel = onTapCancel
-            ..onSecondaryTap = onSecondaryTap
-            ..onSecondaryTapDown = onSecondaryTapDown
-            ..onSecondaryTapUp = onSecondaryTapUp
-            ..onSecondaryTapCancel = onSecondaryTapCancel
-            ..onTertiaryTapDown = onTertiaryTapDown
-            ..onTertiaryTapUp = onTertiaryTapUp
-            ..onTertiaryTapCancel = onTertiaryTapCancel;
-        },
-      );
-    }
-
-    if (onDoubleTap != null) {
-      gestures[DoubleTapGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<DoubleTapGestureRecognizer>(
-        () => DoubleTapGestureRecognizer(debugOwner: this),
-        (DoubleTapGestureRecognizer instance) {
-          instance
-            ..onDoubleTapDown = onDoubleTapDown
-            ..onDoubleTap = onDoubleTap
-            ..onDoubleTapCancel = onDoubleTapCancel;
-        },
-      );
-    }
-
-    if (onLongPress != null ||
-        onLongPressUp != null ||
-        onLongPressStart != null ||
-        onLongPressMoveUpdate != null ||
-        onLongPressEnd != null ||
-        onSecondaryLongPress != null ||
-        onSecondaryLongPressUp != null ||
-        onSecondaryLongPressStart != null ||
-        onSecondaryLongPressMoveUpdate != null ||
-        onSecondaryLongPressEnd != null) {
-      gestures[LongPressGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
-        () => LongPressGestureRecognizer(debugOwner: this),
-        (LongPressGestureRecognizer instance) {
-          instance
-            ..onLongPress = onLongPress
-            ..onLongPressStart = onLongPressStart
-            ..onLongPressMoveUpdate = onLongPressMoveUpdate
-            ..onLongPressEnd = onLongPressEnd
-            ..onLongPressUp = onLongPressUp
-            ..onSecondaryLongPress = onSecondaryLongPress
-            ..onSecondaryLongPressStart = onSecondaryLongPressStart
-            ..onSecondaryLongPressMoveUpdate = onSecondaryLongPressMoveUpdate
-            ..onSecondaryLongPressEnd = onSecondaryLongPressEnd
-            ..onSecondaryLongPressUp = onSecondaryLongPressUp;
-        },
-      );
-    }
-
-    if (onVerticalDragDown != null ||
-        onVerticalDragStart != null ||
-        onVerticalDragUpdate != null ||
-        onVerticalDragEnd != null ||
-        onVerticalDragCancel != null) {
-      gestures[VerticalDragGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
-        () => VerticalDragGestureRecognizer(debugOwner: this),
-        (VerticalDragGestureRecognizer instance) {
-          instance
-            ..onDown = onVerticalDragDown
-            ..onStart = onVerticalDragStart
-            ..onUpdate = onVerticalDragUpdate
-            ..onEnd = onVerticalDragEnd
-            ..onCancel = onVerticalDragCancel
-            ..dragStartBehavior = dragStartBehavior;
-        },
-      );
-    }
-
-    if (onHorizontalDragDown != null ||
-        onHorizontalDragStart != null ||
-        onHorizontalDragUpdate != null ||
-        onHorizontalDragEnd != null ||
-        onHorizontalDragCancel != null) {
-      gestures[HorizontalDragGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>(
-        () => HorizontalDragGestureRecognizer(debugOwner: this),
-        (HorizontalDragGestureRecognizer instance) {
-          instance
-            ..onDown = onHorizontalDragDown
-            ..onStart = onHorizontalDragStart
-            ..onUpdate = onHorizontalDragUpdate
-            ..onEnd = onHorizontalDragEnd
-            ..onCancel = onHorizontalDragCancel
-            ..dragStartBehavior = dragStartBehavior;
-        },
-      );
-    }
-
-    if (onPanDown != null ||
-        onPanStart != null ||
-        onPanUpdate != null ||
-        onPanEnd != null ||
-        onPanCancel != null) {
-      gestures[PanGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
-        () => PanGestureRecognizer(debugOwner: this),
-        (PanGestureRecognizer instance) {
-          instance
-            ..onDown = onPanDown
-            ..onStart = onPanStart
-            ..onUpdate = onPanUpdate
-            ..onEnd = onPanEnd
-            ..onCancel = onPanCancel
-            ..dragStartBehavior = dragStartBehavior;
-        },
-      );
-    }
-
-    if (onScaleStart != null || onScaleUpdate != null || onScaleEnd != null) {
-      gestures[ScaleGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
-        () => ScaleGestureRecognizer(debugOwner: this),
-        (ScaleGestureRecognizer instance) {
-          instance
-            ..onStart = onScaleStart
-            ..onUpdate = onScaleUpdate
-            ..onEnd = onScaleEnd;
-        },
-      );
-    }
-
-    if (onForcePressStart != null ||
-        onForcePressPeak != null ||
-        onForcePressUpdate != null ||
-        onForcePressEnd != null) {
-      gestures[ForcePressGestureRecognizer] =
-          GestureRecognizerFactoryWithHandlers<ForcePressGestureRecognizer>(
-        () => ForcePressGestureRecognizer(debugOwner: this),
-        (ForcePressGestureRecognizer instance) {
-          instance
-            ..onStart = onForcePressStart
-            ..onPeak = onForcePressPeak
-            ..onUpdate = onForcePressUpdate
-            ..onEnd = onForcePressEnd;
-        },
-      );
-    }
-
     return RawGestureDetector(
-      gestures: gestures,
-      behavior: behavior,
-      excludeFromSemantics: excludeFromSemantics,
       child: child,
     );
   }
@@ -1107,150 +939,14 @@ class RawGestureDetector extends StatefulWidget {
 
 /// State for a [RawGestureDetector].
 class RawGestureDetectorState extends State<RawGestureDetector> {
-  Map<Type, GestureRecognizer>? _recognizers =
-      const <Type, GestureRecognizer>{};
-  SemanticsGestureDelegate? _semantics;
-
-  @override
-  void initState() {
-    super.initState();
-    _semantics = widget.semantics ?? _DefaultSemanticsGestureDelegate(this);
-    _syncAll(widget.gestures);
-  }
-
-  @override
-  void didUpdateWidget(RawGestureDetector oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!(oldWidget.semantics == null && widget.semantics == null)) {
-      _semantics = widget.semantics ?? _DefaultSemanticsGestureDelegate(this);
-    }
-    _syncAll(widget.gestures);
-  }
-
-  /// This method can be called after the build phase, during the
-  /// layout of the nearest descendant [RenderObjectWidget] of the
-  /// gesture detector, to update the list of active gesture
-  /// recognizers.
-  ///
-  /// The typical use case is [Scrollable]s, which put their viewport
-  /// in their gesture detector, and then need to know the dimensions
-  /// of the viewport and the viewport's child to determine whether
-  /// the gesture detector should be enabled.
-  ///
-  /// The argument should follow the same conventions as
-  /// [RawGestureDetector.gestures]. It acts like a temporary replacement for
-  /// that value until the next build.
-  void replaceGestureRecognizers(Map<Type, GestureRecognizerFactory> gestures) {
-    assert(() {
-      if (!context.findRenderObject()!.owner!.debugDoingLayout) {
-        throw FlutterError.fromParts(<DiagnosticsNode>[
-          ErrorSummary(
-              'Unexpected call to replaceGestureRecognizers() method of RawGestureDetectorState.'),
-          ErrorDescription(
-              'The replaceGestureRecognizers() method can only be called during the layout phase.'),
-          ErrorHint(
-              'To set the gesture recognizers at other times, trigger a new build using setState() '
-              'and provide the new gesture recognizers as constructor arguments to the corresponding '
-              'RawGestureDetector or GestureDetector object.'),
-        ]);
-      }
-      return true;
-    }());
-    _syncAll(gestures);
-    if (!widget.excludeFromSemantics) {
-      final RenderSemanticsGestureHandler semanticsGestureHandler =
-          context.findRenderObject()! as RenderSemanticsGestureHandler;
-      _updateSemanticsForRenderObject(semanticsGestureHandler);
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final GestureRecognizer recognizer in _recognizers!.values)
-      recognizer.dispose();
-    _recognizers = null;
-    super.dispose();
-  }
-
-  void _syncAll(Map<Type, GestureRecognizerFactory> gestures) {
-    assert(_recognizers != null);
-    final Map<Type, GestureRecognizer> oldRecognizers = _recognizers!;
-    _recognizers = <Type, GestureRecognizer>{};
-    for (final Type type in gestures.keys) {
-      assert(gestures[type] != null);
-      assert(gestures[type]!._debugAssertTypeMatches(type));
-      assert(!_recognizers!.containsKey(type));
-      _recognizers![type] =
-          oldRecognizers[type] ?? gestures[type]!.constructor();
-      assert(_recognizers![type].runtimeType == type,
-          'GestureRecognizerFactory of type $type created a GestureRecognizer of type ${_recognizers![type].runtimeType}. The GestureRecognizerFactory must be specialized with the type of the class that it returns from its constructor method.');
-      gestures[type]!.initializer(_recognizers![type]!);
-    }
-    for (final Type type in oldRecognizers.keys) {
-      if (!_recognizers!.containsKey(type)) oldRecognizers[type]!.dispose();
-    }
-  }
-
-  void _handlePointerDown(PointerDownEvent event) {
-    assert(_recognizers != null);
-    for (final GestureRecognizer recognizer in _recognizers!.values)
-      recognizer.addPointer(event);
-  }
-
-  HitTestBehavior get _defaultBehavior {
-    return widget.child == null
-        ? HitTestBehavior.translucent
-        : HitTestBehavior.deferToChild;
-  }
-
-  void _updateSemanticsForRenderObject(
-      RenderSemanticsGestureHandler renderObject) {
-    assert(!widget.excludeFromSemantics);
-    assert(_semantics != null);
-    _semantics!.assignSemantics(renderObject);
-  }
-
   @override
   Widget build(BuildContext context) {
-    Widget result = Listener(
-      onPointerDown: _handlePointerDown,
-      behavior: widget.behavior ?? _defaultBehavior,
-      child: widget.child,
-    );
-    if (!widget.excludeFromSemantics)
-      result = _GestureSemantics(
-        child: result,
-        assignSemantics: _updateSemanticsForRenderObject,
-      );
-    return result;
+    return widget.child ?? Container();
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    if (_recognizers == null) {
-      properties.add(DiagnosticsNode.message('DISPOSED'));
-    } else {
-      final List<String> gestures = _recognizers!.values
-          .map<String>(
-              (GestureRecognizer recognizer) => recognizer.debugDescription)
-          .toList();
-      properties.add(
-          IterableProperty<String>('gestures', gestures, ifEmpty: '<none>'));
-      properties.add(IterableProperty<GestureRecognizer>(
-          'recognizers', _recognizers!.values,
-          level: DiagnosticLevel.fine));
-      properties.add(DiagnosticsProperty<bool>(
-          'excludeFromSemantics', widget.excludeFromSemantics,
-          defaultValue: false));
-      if (!widget.excludeFromSemantics) {
-        properties.add(DiagnosticsProperty<SemanticsGestureDelegate>(
-            'semantics', widget.semantics,
-            defaultValue: null));
-      }
-    }
-    properties.add(EnumProperty<HitTestBehavior>('behavior', widget.behavior,
-        defaultValue: null));
   }
 }
 
@@ -1261,7 +957,7 @@ class _GestureSemantics extends SingleChildRenderObjectWidget {
     Key? key,
     Widget? child,
     required this.assignSemantics,
-  })   : assert(assignSemantics != null),
+  })  : assert(assignSemantics != null),
         super(key: key, child: child);
 
   final _AssignSemantics assignSemantics;
