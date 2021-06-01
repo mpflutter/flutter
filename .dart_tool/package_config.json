@@ -50,24 +50,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "flutter_goldens",
-      "rootUri": "file:///Users/saiakirahui/flutter/packages/flutter_goldens",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "flutter_goldens_client",
-      "rootUri": "../../../../flutter/packages/flutter_goldens_client",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "flutter_test",
-      "rootUri": "file:///Users/saiakirahui/flutter/packages/flutter_test",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "matcher",
       "rootUri": "file:///Users/saiakirahui/flutter/.pub-cache/hosted/pub.flutter-io.cn/matcher-0.12.10",
       "packageUri": "lib/",
@@ -100,12 +82,6 @@
     {
       "name": "process",
       "rootUri": "file:///Users/saiakirahui/flutter/.pub-cache/hosted/pub.flutter-io.cn/process-4.0.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "sky_engine",
-      "rootUri": "file:///Users/saiakirahui/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -164,7 +140,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-05-20T09:36:50.641949Z",
+  "generated": "2021-06-01T14:42:45.558292Z",
   "generator": "pub",
-  "generatorVersion": "2.12.3"
+  "generatorVersion": "2.13.0"
 }
