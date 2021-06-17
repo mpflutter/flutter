@@ -202,26 +202,86 @@ class MockPath implements Path {
 
   void addRRect(RRect rrect) {
     moveTo(rrect.left + rrect.tlRadius.x, rrect.top);
-    lineTo(rrect.right - rrect.trRadius.x, rrect.top);
-    arcToPoint(
-      Offset(rrect.right, rrect.top + rrect.trRadius.x),
-      radius: Radius.circular(rrect.trRadius.x),
-    );
-    lineTo(rrect.right, rrect.bottom - rrect.brRadius.x);
-    arcToPoint(
-      Offset(rrect.right - rrect.brRadius.x, rrect.bottom),
-      radius: Radius.circular(rrect.brRadius.x),
-    );
-    lineTo(rrect.left + rrect.blRadius.x, rrect.bottom);
-    arcToPoint(
-      Offset(rrect.left, rrect.bottom - rrect.blRadius.x),
-      radius: Radius.circular(rrect.blRadius.x),
-    );
-    lineTo(rrect.left, rrect.top + rrect.tlRadius.x);
-    arcToPoint(
-      Offset(rrect.left + rrect.tlRadius.x, rrect.top),
-      radius: Radius.circular(rrect.tlRadius.x),
-    );
+    if (rrect.left + rrect.tlRadius.x == rrect.right - rrect.trRadius.x) {
+      arcTo(
+        Rect.fromCircle(
+          center: Offset(
+            rrect.right - rrect.trRadius.x,
+            rrect.top + rrect.trRadius.x,
+          ),
+          radius: rrect.trRadius.x,
+        ),
+        -math.pi * 0.5,
+        math.pi * 0.5,
+        false,
+      );
+    } else {
+      lineTo(rrect.right - rrect.trRadius.x, rrect.top);
+      arcToPoint(
+        Offset(rrect.right, rrect.top + rrect.trRadius.x),
+        radius: Radius.circular(rrect.trRadius.x),
+      );
+    }
+    if (rrect.top + rrect.trRadius.x == rrect.bottom - rrect.brRadius.x) {
+      arcTo(
+        Rect.fromCircle(
+          center: Offset(
+            rrect.right - rrect.brRadius.x,
+            rrect.bottom - rrect.brRadius.x,
+          ),
+          radius: rrect.brRadius.x,
+        ),
+        0,
+        math.pi * 0.5,
+        false,
+      );
+    } else {
+      lineTo(rrect.right, rrect.bottom - rrect.brRadius.x);
+      arcToPoint(
+        Offset(rrect.right - rrect.brRadius.x, rrect.bottom),
+        radius: Radius.circular(rrect.brRadius.x),
+      );
+    }
+    if (rrect.right - rrect.brRadius.x == rrect.left + rrect.blRadius.x) {
+      arcTo(
+        Rect.fromCircle(
+          center: Offset(
+            rrect.left + rrect.blRadius.x,
+            rrect.bottom - rrect.blRadius.x,
+          ),
+          radius: rrect.blRadius.x,
+        ),
+        math.pi * 0.5,
+        math.pi * 0.5,
+        false,
+      );
+    } else {
+      lineTo(rrect.left + rrect.blRadius.x, rrect.bottom);
+      arcToPoint(
+        Offset(rrect.left, rrect.bottom - rrect.blRadius.x),
+        radius: Radius.circular(rrect.blRadius.x),
+      );
+    }
+    if (rrect.bottom - rrect.blRadius.x == rrect.top + rrect.tlRadius.x) {
+      arcTo(
+        Rect.fromCircle(
+          center: Offset(
+            rrect.left + rrect.tlRadius.x,
+            rrect.top + rrect.tlRadius.x,
+          ),
+          radius: rrect.tlRadius.x,
+        ),
+        math.pi * 1.0,
+        math.pi * 0.5,
+        false,
+      );
+    } else {
+      lineTo(rrect.left, rrect.top + rrect.tlRadius.x);
+      arcToPoint(
+        Offset(rrect.left + rrect.tlRadius.x, rrect.top),
+        radius: Radius.circular(rrect.tlRadius.x),
+      );
+    }
     lineTo(rrect.right - rrect.trRadius.x, rrect.top);
   }
 
