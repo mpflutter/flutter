@@ -1,14 +1,11 @@
 import 'dart:js' as js;
 
-const bool isTaro =
-    bool.fromEnvironment('mpcore.env.taro', defaultValue: false);
-
 void requestAnimationFrame(Function(num) callback) {
-  if (isTaro) {
+  if (!js.context.hasProperty('requestAnimationFrame')) {
     Future.delayed(Duration(milliseconds: 16)).then((value) {
       callback(DateTime.now().millisecondsSinceEpoch);
     });
-    return;
+  } else {
+    js.context.callMethod('requestAnimationFrame', [callback]);
   }
-  js.context.callMethod('requestAnimationFrame', [callback]);
 }
