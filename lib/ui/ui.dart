@@ -15,8 +15,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import './src/mock_engine/request_animation_frame_io.dart'
     if (dart.library.js) './src/mock_engine/request_animation_frame_js.dart';
-import './src/mock_engine/device_info_io.dart'
-    if (dart.library.js) './src/mock_engine/device_info_js.dart';
+import 'src/mock_engine/device_info.dart';
 
 part 'src/ui/annotations.dart';
 part 'src/ui/canvas.dart';
